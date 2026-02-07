@@ -80,8 +80,13 @@ public class SparseMaze implements Maze {
 
     @Override
     public boolean isOpen(int row, int col) {
-        // TODO: Implement this
-        return false;
+        Node oneBefore = goToOneBefore(row, col);
+        int targetIndex = row*width + col;
+        if (oneBefore.next != null && oneBefore.next.linearIndex == targetIndex) {
+            return oneBefore.next.value;
+        } else {
+            return defaultValue;
+        }
     }
 
     @Override
@@ -90,19 +95,37 @@ public class SparseMaze implements Maze {
         int targetIndex = row*width + col;
         boolean nodeNeeded = (defaultValue != isOpen);
         if (nodeNeeded) {
+
+            //Make sure we aren't at the end of the Node list
             if (oneBefore.next != null) {
+
+                //Handle case that Node already exists
                 if (oneBefore.next.linearIndex == targetIndex) {
                     oneBefore.next.value = isOpen;
-                } else {
+                    return;
+                } else { //Handles case we need a new node
                     Node newNode = new Node(isOpen, targetIndex);
                     newNode.next = oneBefore.next;
                     oneBefore.next = newNode;
                     storedCellCount++;
+                    return;
                 }
-            } else {
+            } else { //Handles case that we are at end of node list
                 Node newNode = new Node(isOpen, targetIndex);
                 oneBefore.next = newNode;
                 storedCellCount++;
+                return;
+            }
+        } else { //Case that we need to delete nodes
+            if (oneBefore.next == null) {
+                return; //No action needed if at end of list, implying there is no node
+            } else if (oneBefore.next.linearIndex == targetIndex) {
+                //Need to remove node if node exists at location
+                oneBefore.next = oneBefore.next.next;
+                storedCellCount--;
+                return;
+            } else {
+                return; //No action needed if no Node exists at coordinate
             }
         }
     }
@@ -137,8 +160,28 @@ public class SparseMaze implements Maze {
 
     @Override
     public Iterator<Boolean> iterator() {
-        // TODO: Implement this
-        return null;
+        return new SparseMazeIterator();
+    }
+
+    private class SparseMazeIterator implements Iterator<Boolean> {
+
+        Node cur;
+        
+        @Override
+        public boolean hasNext() {
+            return cur != null;
+        }
+
+        @Override
+        public Boolean next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            } else {
+                Boolean currentData = cur.value;
+                cur = cur.next;
+                return currentData;
+            }
+        }
     }
 
 }
