@@ -31,6 +31,7 @@ public class SparseMaze implements Maze {
         public Node(boolean value, int linearIndex) {
             this.value = value;
             this.linearIndex = linearIndex;
+            next = null;
         }
     }
 
@@ -85,8 +86,46 @@ public class SparseMaze implements Maze {
 
     @Override
     public void setCell(int row, int col, boolean isOpen) {
+        Node oneBefore = goToOneBefore(row, col);
         int targetIndex = row*width + col;
-        
+        boolean nodeNeeded = (defaultValue != isOpen);
+        if (nodeNeeded) {
+            if (oneBefore.next != null) {
+                if (oneBefore.next.linearIndex == targetIndex) {
+                    oneBefore.next.value = isOpen;
+                } else {
+                    Node newNode = new Node(isOpen, targetIndex);
+                    newNode.next = oneBefore.next;
+                    oneBefore.next = newNode;
+                    storedCellCount++;
+                }
+            } else {
+                Node newNode = new Node(isOpen, targetIndex);
+                oneBefore.next = newNode;
+                storedCellCount++;
+            }
+        }
+    }
+
+    //Helper function
+
+    /**
+     * Helper function to get reference to the node before the expected node at a coordinate
+     * @param row - the row coordinate, (0-indexed)
+     * @param col - the col coordinate, (0-indexed)
+     * @return reference to Node before at coordinate, regardless of whether or not a node exists at the coordinate
+     */
+    private Node goToOneBefore(int row, int col) {
+        int targetIndex = row*width + col;
+        Node currNode = head;
+        while (currNode.next != null) {
+            if (targetIndex > currNode.next.linearIndex) {
+                currNode = currNode.next;
+            } else {
+                return currNode;
+            }
+        }
+        return currNode; //This statement only runs if targetIndex is past all existing Nodes, returning last node
     }
 
     @Override
