@@ -44,11 +44,17 @@ public class SparseMaze implements Maze {
      *        true for open, false for blocked
      * @throws DimensionException if width or height are non-positive
      */
-    public SparseMaze(int width, int height, boolean defaultValue) {
+    public SparseMaze(int width, int height, boolean defaultValue) throws DimensionException {
+
+        if (height <= 0 || width <= 0) {
+            throw new DimensionException(width, height);
+        }
+
         this.width = width;
         this.height = height;
         this.defaultValue = defaultValue;
         this.storedCellCount = 0;
+        this.head = new Node(false, -1);
         //Hopefully this constructor is done
     }
 
@@ -80,6 +86,11 @@ public class SparseMaze implements Maze {
 
     @Override
     public boolean isOpen(int row, int col) {
+
+        if (row < 0 || row >= height || col >= width || col < 0) {
+            throw new CellIndexOutOfBoundsException(row, col, width, height);
+        }
+
         Node oneBefore = goToOneBefore(row, col);
         int targetIndex = row*width + col;
         if (oneBefore.next != null && oneBefore.next.linearIndex == targetIndex) {
@@ -91,6 +102,11 @@ public class SparseMaze implements Maze {
 
     @Override
     public void setCell(int row, int col, boolean isOpen) {
+
+        if (row < 0 || row >= height || col >= width || col < 0) {
+            throw new CellIndexOutOfBoundsException(row, col, width, height);
+        }
+
         Node oneBefore = goToOneBefore(row, col);
         int targetIndex = row*width + col;
         boolean nodeNeeded = (defaultValue != isOpen);
@@ -165,11 +181,17 @@ public class SparseMaze implements Maze {
 
     private class SparseMazeIterator implements Iterator<Boolean> {
 
-        Node cur;
-        
+        int mazeCursor;
+        Node nodeCursor;
+
+        public SparseMazeIterator() {
+            mazeCursor = 0;
+            nodeCursor = head.next;
+        }
+
         @Override
         public boolean hasNext() {
-            return cur != null;
+            return (mazeCursor < height*width);
         }
 
         @Override
@@ -177,11 +199,16 @@ public class SparseMaze implements Maze {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             } else {
-                Boolean currentData = cur.value;
-                cur = cur.next;
-                return currentData;
+                if ((nodeCursor == null) || (nodeCursor.linearIndex > mazeCursor)) {
+                    mazeCursor++;
+                    return defaultValue;
+                } else { //Case when nodeCursor.linearIndex == mazeCursor
+                    mazeCursor++;
+                    Boolean value = nodeCursor.value;
+                    nodeCursor = nodeCursor.next;
+                    return value;
+                }
             }
         }
     }
-
 }
