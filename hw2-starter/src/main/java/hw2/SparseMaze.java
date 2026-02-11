@@ -118,17 +118,17 @@ public class SparseMaze implements Maze {
     if (nodeNeeded) { //Case we need to add a node to store non-default value
       handleNodeNeeded(targetIndex, oneBefore, isOpen);
     } else { //Case that we need to delete nodes
-      if (oneBefore.next == null) {
-        return; //No action needed if at end of list, implying there is no node
-      } else if (oneBefore.next.linearIndex == targetIndex) {
-        //Need to remove node if node exists at location
-        oneBefore.next = oneBefore.next.next;
-        storedCellCount--;
-      } //No action needed if no Node exists at coordinate
+      handleNodeDelete(targetIndex, oneBefore, isOpen);
     }
     return;
   }
 
+  /**
+   * Helper function to implement algorithm to add a node when needed.
+   * @param targetIndex the index (row + width + col) corresponding to the cell that is being changed
+   * @param oneBefore the reference to the node right before where a node with an index of the targetIndex would exist
+   * @param isOpen true to make the cell open, false to block it
+   */
   private void handleNodeNeeded(int targetIndex, Node oneBefore, boolean isOpen) {
     if (oneBefore.next != null) {  //Make sure we aren't at the end of the Node list
 
@@ -144,6 +144,23 @@ public class SparseMaze implements Maze {
       oneBefore.next = new Node(isOpen, targetIndex);
       storedCellCount++;
     }
+    return;
+  }
+
+  /**
+   * Helper function to implement algorithm to delete a node when needed.
+   * @param targetIndex the index (row + width + col) corresponding to the cell that is being changed
+   * @param oneBefore the reference to the node right before where a node with an index of the targetIndex would exist
+   * @param isOpen true to make the cell open, false to block it
+   */
+  private void handleNodeDelete(int targetIndex, Node oneBefore, boolean isOpen) {
+    if (oneBefore.next == null) {
+      return; //No action needed if at end of list, implying there is no node
+    } else if (oneBefore.next.linearIndex == targetIndex) {
+      //Need to remove node if node exists at location
+      oneBefore.next = oneBefore.next.next;
+      storedCellCount--;
+    } //No action needed if no Node exists at coordinate
     return;
   }
 
