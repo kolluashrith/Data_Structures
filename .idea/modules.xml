@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Data_Structures.iml" filepath="$PROJECT_DIR$/.idea/Data_Structures.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lecture_Starters/chap01-starter/chap01-starter.iml" filepath="$PROJECT_DIR$/Lecture_Starters/chap01-starter/chap01-starter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lecture_Starters/chap03-starter/chap03-starter.iml" filepath="$PROJECT_DIR$/Lecture_Starters/chap03-starter/chap03-starter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chap06-starter/src/main/main.iml" filepath="$PROJECT_DIR$/chap06-starter/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lecture_Starters/chap05-starter/src/main/main2.iml" filepath="$PROJECT_DIR$/Lecture_Starters/chap05-starter/src/main/main2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hw2-starter/src/main/main3.iml" filepath="$PROJECT_DIR$/hw2-starter/src/main/main3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lecture_Starters/chap04-starter/src/main/main4.iml" filepath="$PROJECT_DIR$/Lecture_Starters/chap04-starter/src/main/main4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chap07-starter/src/main/main5.iml" filepath="$PROJECT_DIR$/chap07-starter/src/main/main5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hw1-starter/src/main/main6.iml" filepath="$PROJECT_DIR$/hw1-starter/src/main/main6.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hw1-starter/src/test/test.iml" filepath="$PROJECT_DIR$/hw1-starter/src/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chap07-starter/src/test/test2.iml" filepath="$PROJECT_DIR$/chap07-starter/src/test/test2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lecture_Starters/chap04-starter/src/test/test3.iml" filepath="$PROJECT_DIR$/Lecture_Starters/chap04-starter/src/test/test3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hw2-starter/src/test/test4.iml" filepath="$PROJECT_DIR$/hw2-starter/src/test/test4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lecture_Starters/chap05-starter/src/test/test5.iml" filepath="$PROJECT_DIR$/Lecture_Starters/chap05-starter/src/test/test5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chap06-starter/src/test/test6.iml" filepath="$PROJECT_DIR$/chap06-starter/src/test/test6.iml" />
+    </modules>
+  </component>
+</project>
