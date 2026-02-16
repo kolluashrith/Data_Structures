@@ -1,5 +1,8 @@
 package starter.exercise;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 @SuppressWarnings("all")
 public class MoocRoster implements Roster {
   private final Student[] students;
@@ -25,5 +28,28 @@ public class MoocRoster implements Roster {
   @Override
   public Student find(String email) {
     return null; // stub - leave it as is
+  }
+
+  @Override
+  public Iterator<Student> iterator() {
+    return new moocRosterIterator();
+  }
+
+  private class moocRosterIterator implements Iterator<Student> {
+
+    private int cursor = 0;
+
+    @Override
+    public boolean hasNext() {
+      return cursor < numStudents;
+    }
+
+    @Override
+    public Student next() {
+      if (!hasNext()) {
+        throw new NoSuchElementException();
+      }
+      return students[cursor++];
+    }
   }
 }

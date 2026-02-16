@@ -9,8 +9,8 @@ public class IteratorExercise {
     myRoster.add(new Student("Johnny Roe", "john@email.com"));
     myRoster.add(new Student("Janie Roe", "john@email.com"));
 
-//    for(Student s: myRoster) {
-//      System.out.println(s);
-//    }
+    for(Student s: myRoster) {
+      System.out.println(s);
+    }
   }
 }

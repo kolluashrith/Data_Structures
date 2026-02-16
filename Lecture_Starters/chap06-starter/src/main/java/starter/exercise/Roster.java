@@ -1,7 +1,7 @@
 package starter.exercise;
 
 @SuppressWarnings("all")
-public interface Roster {
+public interface Roster extends Iterable<Student> {
 
   void add(Student s);
 
