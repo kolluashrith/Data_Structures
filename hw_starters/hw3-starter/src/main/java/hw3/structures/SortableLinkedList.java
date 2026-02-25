@@ -2,6 +2,7 @@ package hw3.structures;
 
 import hw3.monitoring.PerformanceMonitor;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Linked list-based implementation of SortableList and PerformanceMonitor.
@@ -25,20 +26,70 @@ public class SortableLinkedList<T extends Comparable<T>>
    * @throws IllegalArgumentException if data is null
    */
   public SortableLinkedList(T[] data) {
-    // TODO: Update me!
-    this.sentinel = null;
-    this.size = 0;
+    if  (data == null) {
+      throw new IllegalArgumentException("Data array cannot be null");
+    }
+
+    this.sentinel = new LinkPosition<>(-1, null); //Initialize sentinel node
+    LinkPosition<T> currNode = this.sentinel; //Temp var to grow linkedlist
+    this.size = data.length;
+
+    for (int i = 0; i < data.length; i++) {
+      currNode.next = new LinkPosition<>(i, data[i]);
+      currNode = currNode.next;
+    }
+
+    this.comparisonCount = 0;
+    this.swapCount = 0;
+  }
+
+  /**
+   * Validates that the given index is within bounds.
+   *
+   * @param index the index to validate
+   * @throws IndexOutOfBoundsException if index is negative or >= size()
+   */
+  private void validateIndex(int index) {
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException(
+              String.format("Index %d out of bounds for length %d", index, size));
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private LinkPosition<T> validatePosition(Position pos) {
+    if (pos == null) {
+      throw new IllegalArgumentException("Position cannot be null");
+    }
+    if (!(pos instanceof LinkPosition)) {
+      throw new IllegalArgumentException(
+              "Position must be an LinkPosition for this implementation");
+    }
+    if (pos.index < 0 || pos.index >= size) {
+      throw new IllegalArgumentException("Position index out of bounds: " + pos.index);
+    }
+    if (getPosition(pos.index) != pos) {
+      throw new IllegalArgumentException("Position does not belong to this list");
+    }
+    return (LinkPosition<T>) pos;
   }
 
   @Override
   public int compare(Position pos1, Position pos2) {
-    // TODO: Implement me!
-    return 0;
+    LinkPosition<T> linkPos1 = validatePosition(pos1);
+    LinkPosition<T> linkPos2 = validatePosition(pos2);
+    comparisonCount++;
+    return linkPos1.data.compareTo(linkPos2.data);
   }
 
   @Override
   public void swap(Position pos1, Position pos2) {
-    // TODO: Implement me!
+    LinkPosition<T> linkPos1 = validatePosition(pos1);
+    LinkPosition<T> linkPos2 = validatePosition(pos2);
+    swapCount++;
+    T temp = linkPos1.data;
+    linkPos1.data = linkPos2.data;
+    linkPos2.data = temp;
   }
 
   @Override
@@ -48,14 +99,18 @@ public class SortableLinkedList<T extends Comparable<T>>
 
   @Override
   public Position getPosition(int index) {
-    // TODO: Implement me!
-    return null;
+    validateIndex(index);
+    LinkPosition<T> currNode = this.sentinel;
+    for (int i = 0; i <= index; i++) {
+      currNode = currNode.next;
+    }
+    return currNode;
   }
 
   @Override
   public T get(Position pos) {
-    // TODO: Implement me!
-    return null;
+    LinkPosition<T> linkPos = validatePosition(pos);
+    return linkPos.data;
   }
 
   @Override
@@ -121,17 +176,26 @@ public class SortableLinkedList<T extends Comparable<T>>
   }
 
   private class SortableLinkedListIterator implements Iterator<Position> {
+    LinkPosition<T> currNode;
+
+    public SortableLinkedListIterator() {
+      currNode = sentinel.next;
+    }
 
     @Override
     public boolean hasNext() {
-      // TODO: Implement me!
-      return false;
+      return currNode != null;
     }
 
     @Override
     public Position next() {
-      // TODO: Implement me!
-      return null;
+      if (currNode == null) {
+        throw new NoSuchElementException();
+      } else {
+        T currData = currNode.data;
+        currNode = currNode.next;
+        return currNode;
+      }
     }
   }
 }
