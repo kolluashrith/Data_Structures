@@ -192,9 +192,9 @@ public class SortableLinkedList<T extends Comparable<T>>
       if (currNode == null) {
         throw new NoSuchElementException();
       } else {
-        T currData = currNode.data;
+        Position currPos = currNode;
         currNode = currNode.next;
-        return currNode;
+        return currPos;
       }
     }
   }

@@ -1,5 +1,6 @@
 package hw3.sort;
 
+import hw3.structures.Position;
 import hw3.structures.SortableList;
 
 /**
@@ -18,7 +19,53 @@ public class BinaryInsertionSort<T extends Comparable<T>> implements SortingAlgo
 
   @Override
   public void sort(SortableList<T> list) {
-    // TODO: Implement Me!
+    if (list == null) {
+      throw new IllegalArgumentException("List cannot be null");
+    }
+
+    int n = list.size();
+
+    // if n <= 1, the list is already sorted and will skip the following loop
+    // Start from the second element (index 1)
+    // The first element is considered already "sorted"
+    for (int i = 1; i < n; i++) {
+      // Find the correct position for element at index i
+      // by comparing it with elements in the sorted portion (0 to i-1)
+      int j = i;
+
+      // Move element at position i to its correct position
+      // by swapping it leftward until it's in the right place
+      int middle = insert(list, i);
+      while (j > middle) {
+        Position prevPos = list.getPosition(j - 1);
+        Position currentPos = list.getPosition(j);
+
+        list.swap(prevPos, currentPos);
+        j--;
+      }
+    }
+  }
+
+  //Takes in list and i and performs binary search between 0 and i
+  private int insert(SortableList<T> list, int index) {
+    int front = 0;
+    int back = index;
+    Position currentPos = list.getPosition(index);
+    int middle = (front + back) / 2;
+
+    while (front < back) {
+      middle = (front + back) / 2;
+      Position midPos = list.getPosition(middle);
+      int comparison = list.compare(currentPos, midPos);
+      if (comparison < 0) {
+        back = middle;
+      } else if (comparison > 0) {
+        front = middle + 1;
+      } else  {
+        return middle;
+      }
+    }
+    return front; //If here, then front or back was updated but middle is stale, so return front
   }
 
   @Override

@@ -1,10 +1,5 @@
 package hw3.monitoring;
 
-import hw3.monitoring.PerformanceMonitor;
-import hw3.sort.BubbleSort;
-import hw3.sort.InsertionSort;
-import hw3.sort.OptimizedBubbleSort;
-import hw3.sort.SelectionSort;
 import hw3.structures.ArrayBag;
 import hw3.structures.LinkedListBag;
 import hw3.structures.SortableArrayList;
@@ -23,6 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PerformanceMonitorTest {
 
   // --- SortableArrayList performance monitoring tests ---
+
+  @Test
+  public void testSortableArrayListCounterStartsAt0() {
+    Integer[] data = {3, 1, 4};
+    SortableArrayList<Integer> list = new SortableArrayList<>(data);
+    PerformanceMonitor monitor = list;
+
+    assertEquals(0, monitor.getComparisonCount());
+    assertEquals(0, monitor.getModificationCount());
+  }
 
   @Test
   public void testSortableArrayListCounterReset() {
@@ -91,7 +96,37 @@ public class PerformanceMonitorTest {
     assertEquals(3, monitor.getModificationCount());
   }
 
+  @Test
+  public void testSortableArrayListUpdatesSwapAndComparisonIndependently() {
+    Integer[] data = {3, 1, 4, 1, 5};
+    SortableArrayList<Integer> list = new SortableArrayList<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.swap(list.getPosition(0), list.getPosition(1));
+
+    assertEquals(1, monitor.getModificationCount());
+    assertEquals(0, monitor.getComparisonCount());
+
+    list.compare(list.getPosition(2), list.getPosition(3));
+
+    assertEquals(1, monitor.getComparisonCount());
+    assertEquals(1, monitor.getModificationCount());
+
+  }
+
+
   // --- SortableLinkedList performance monitoring tests ---
+
+  @Test
+  public void testSortableLinkedListCounterStartsAt0() {
+    Integer[] data = {3, 1, 4};
+    SortableLinkedList<Integer> list = new SortableLinkedList<>(data);
+    PerformanceMonitor monitor = list;
+
+    assertEquals(0, monitor.getComparisonCount());
+    assertEquals(0, monitor.getModificationCount());
+  }
 
   @Test
   public void testSortableLinkedListCounterReset() {
@@ -160,142 +195,215 @@ public class PerformanceMonitorTest {
     assertEquals(3, monitor.getModificationCount());
   }
 
-//  // --- ArrayBag performance monitoring tests ---
-//
-//  @Test
-//  public void testArrayBagCounterReset() {
-//    Integer[] data = {3, 1, 4};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.compare(0, 1);
-//    list.transpose(1);
-//    monitor.resetCounters();
-//
-//    assertEquals(0, monitor.getComparisonCount());
-//    assertEquals(0, monitor.getModificationCount());
-//  }
-//
-//  @Test
-//  public void testArrayBagTracksComparisons() {
-//    Integer[] data = {3, 1, 4};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.compare(0, 1);
-//
-//    assertEquals(1, monitor.getComparisonCount());
-//  }
-//
-//  @Test
-//  public void testArrayBagTracksMultipleComparisons() {
-//    Integer[] data = {3, 1, 4, 1, 5};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.compare(0, 1);
-//    list.compare(2, 3);
-//    list.compare(1, 4);
-//
-//    assertEquals(3, monitor.getComparisonCount());
-//  }
-//
-//  @Test
-//  public void testArrayBagTracksModifications() {
-//    Integer[] data = {3, 1, 4, 1, 5};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.transpose(1);
-//
-//    assertEquals(1, monitor.getModificationCount());
-//  }
-//
-//  @Test
-//  public void testArrayBagTracksMultipleModifications() {
-//    Integer[] data = {3, 1, 4, 1, 5};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.transpose(1);
-//    list.transpose(2);
-//    list.transpose(4);
-//
-//    assertEquals(3, monitor.getModificationCount());
-//  }
-//
-//  // --- LinkedListBag performance monitoring tests ---
-//
-//  @Test
-//  public void testLinkedListBagCounterReset() {
-//    Integer[] data = {3, 1, 4};
-//    LinkedListBag<Integer> list = new LinkedListBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.compare( 1); //Where tf is the get function???
-//    list.moveToFront(1);
-//    monitor.resetCounters();
-//
-//    assertEquals(0, monitor.getComparisonCount());
-//    assertEquals(0, monitor.getModificationCount());
-//  }
-//
-//  @Test
-//  public void testLinkedListBagTracksComparisons() {
-//    Integer[] data = {3, 1, 4};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.compare(0, 1);
-//
-//    assertEquals(1, monitor.getComparisonCount());
-//  }
-//
-//  @Test
-//  public void testLinkedListBagTracksMultipleComparisons() {
-//    Integer[] data = {3, 1, 4, 1, 5};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.compare(0, 1);
-//    list.compare(2, 3);
-//    list.compare(1, 4);
-//
-//    assertEquals(3, monitor.getComparisonCount());
-//  }
-//
-//  @Test
-//  public void testLinkedListBagTracksModifications() {
-//    Integer[] data = {3, 1, 4, 1, 5};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.transpose(1);
-//
-//    assertEquals(1, monitor.getModificationCount());
-//  }
-//
-//  @Test
-//  public void testLinkedListBagTracksMultipleModifications() {
-//    Integer[] data = {3, 1, 4, 1, 5};
-//    ArrayBag<Integer> list = new ArrayBag<>(data);
-//    PerformanceMonitor monitor = list;
-//
-//    monitor.resetCounters();
-//    list.transpose(1);
-//    list.transpose(2);
-//    list.transpose(4);
-//
-//    assertEquals(3, monitor.getModificationCount());
-//  }
+  @Test
+  public void testSortableLinkedListUpdatesSwapAndComparisonIndependently() {
+    Integer[] data = {3, 1, 4, 1, 5};
+    SortableLinkedList<Integer> list = new SortableLinkedList<>(data);
+    PerformanceMonitor monitor = list;
 
+    monitor.resetCounters();
+    list.swap(list.getPosition(0), list.getPosition(1));
+
+    assertEquals(1, monitor.getModificationCount());
+    assertEquals(0, monitor.getComparisonCount());
+
+    list.compare(list.getPosition(2), list.getPosition(3));
+
+    assertEquals(1, monitor.getComparisonCount());
+    assertEquals(1, monitor.getModificationCount());
+
+  }
+
+
+// --- ArrayBag performance monitoring tests ---
+
+  @Test
+  public void testArrayBagCounterStartsAt0() {
+    Integer[] data = {3, 1, 4};
+    ArrayBag<Integer> list = new ArrayBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    assertEquals(0, monitor.getComparisonCount());
+    assertEquals(0, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testArrayBagCounterReset() {
+    Integer[] data = {3, 1, 4};
+    ArrayBag<Integer> list = new ArrayBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4);
+    list.contains(0);
+    monitor.resetCounters();
+
+    assertEquals(0, monitor.getComparisonCount());
+    assertEquals(0, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testArrayBagTracksComparisons() {
+    Integer[] data = {3, 1, 4};
+    ArrayBag<Integer> list = new ArrayBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4); //3rd element --> 3 comparisons expected
+
+    assertEquals(3, monitor.getComparisonCount());
+  }
+
+  @Test
+  public void testArrayBagTracksModifications() {
+    Integer[] data = {3, 1, 4};
+    ArrayBag<Integer> list = new ArrayBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4); //One transpose modification expected
+
+    assertEquals(1, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testArrayBagTracksMultipleModifications() {
+    Integer[] data = {3, 1, 4};
+    ArrayBag<Integer> list = new ArrayBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4); //One transpose modification expected
+    list.contains(4); //Second transpose modification
+    list.contains(3); //Third transpose modification
+
+    assertEquals(3, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testArrayBagTracksModificationsWhenNonePresent() {
+    Integer[] data = {3, 1, 4};
+    ArrayBag<Integer> list = new ArrayBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(3); //Already at front of list --> no modifications
+
+    assertEquals(0, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testArrayBagTransposeOptimizationReducesComparisons() {
+    Integer[] data = {3, 1, 4, 5, 2, 9};
+
+    ArrayBag<Integer> list = new ArrayBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+
+    for (int i = 0; i < 10; i++) {
+      list.contains(4);
+      list.contains(4);
+    }
+    //Regular array: 3*10 comparisons = 30 total.
+
+    assertTrue(monitor.getComparisonCount() < 30);
+    assertTrue(monitor.getModificationCount() > 0);
+  }
+
+// --- LinkedListBag performance monitoring tests ---
+
+  @Test
+  public void testLinkedListBagCounterStartsAt0() {
+    Integer[] data = {3, 1, 4};
+    LinkedListBag<Integer> list = new LinkedListBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    assertEquals(0, monitor.getComparisonCount());
+    assertEquals(0, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testLinkedListBagCounterReset() {
+    Integer[] data = {3, 1, 4};
+    LinkedListBag<Integer> list = new LinkedListBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4);
+    list.contains(0);
+    monitor.resetCounters();
+
+    assertEquals(0, monitor.getComparisonCount());
+    assertEquals(0, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testLinkedListBagTracksComparisons() {
+    Integer[] data = {3, 1, 4};
+    LinkedListBag<Integer> list = new LinkedListBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4); //3rd element --> 3 comparisons expected
+
+    assertEquals(3, monitor.getComparisonCount());
+  }
+
+  @Test
+  public void testLinkedListTracksModifications() {
+    Integer[] data = {3, 1, 4};
+    LinkedListBag<Integer> list = new LinkedListBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4); //One move to front modification expected
+
+    assertEquals(1, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testLinkedListTracksMultipleModifications() {
+    Integer[] data = {3, 1, 4};
+    LinkedListBag<Integer> list = new LinkedListBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(4); //One move to front modification expected
+    list.contains(3); //Second move to front modification
+    list.contains(4); //Third move to front modification
+
+    assertEquals(3, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testLinkedListTracksModificationsWhenNonePresent() {
+    Integer[] data = {3, 1, 4};
+    LinkedListBag<Integer> list = new LinkedListBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+    list.contains(3); //Already at front of list --> no modifications
+
+    assertEquals(0, monitor.getModificationCount());
+  }
+
+  @Test
+  public void testLinkedListBagMoveToFrontOptimizationReducesComparisons() {
+    Integer[] data = {3, 1, 4, 5, 2, 9};
+
+    LinkedListBag<Integer> list = new LinkedListBag<>(data);
+    PerformanceMonitor monitor = list;
+
+    monitor.resetCounters();
+
+    for (int i = 0; i < 10; i++) {
+      list.contains(4);
+      list.contains(4);
+    }
+    //Regular Linked List: 3*10 comparisons = 30 total.
+
+    assertTrue(monitor.getComparisonCount() < 30);
+    assertTrue(monitor.getModificationCount() > 0);
+  }
 }

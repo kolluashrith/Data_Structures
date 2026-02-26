@@ -41,20 +41,53 @@ public class ArrayBag<T extends Comparable<T>> implements Bag<T>, PerformanceMon
 
   // Compares the target element with the element at a given index.
   // Should return 0 if the elements are equal.
+
+  /**
+   * Compares the target element with the element at a given index.
+   * @param element data to compare
+   * @param index the array index of data to compare element to
+   * @return 0 if the elements are equal, < 0 if element is smaller and > 0 if element is bigger
+   */
   protected int compare(T element, int index) {
-    // TODO: Implement me!
-    return 0;
+    validateIndex(index);
+    comparisonCount++;
+    return element.compareTo(elements[index]);
   }
 
-  // Swaps the element at the given index with its predecessor (transpose).
+  private void validateIndex(int index) {
+    if (index < 0 || index >= elements.length) {
+      throw new IndexOutOfBoundsException(
+              String.format("Index %d out of bounds for length %d", index, elements.length));
+    }
+  }
+
+  /**
+   * Swaps the element at the given index with its predecessor (transpose).
+   * @param index array index at which to swap with predecessor
+   */
   protected void transpose(int index) {
-    // TODO: Implement me!
+    T tmp =  elements[index];
+    elements[index] = elements[index - 1];
+    elements[index - 1] = tmp;
+    modificationCount++;
+    return;
   }
 
   @Override
-  public boolean contains(T element) {
-    // TODO: Implement me using compare and transpose operations!
-    return false; 
+  public boolean contains(T element) throws IllegalArgumentException {
+    if (element == null) { //Catch null inputs
+      throw new  IllegalArgumentException("Element cannot be null");
+    }
+
+    for (int i = 0; i < elements.length; i++) { //Handles case when empty list too
+      if (compare(element, i) == 0) {
+        if (i != 0) { //handle edge case that element is at beginning of list (no predecessor)
+          transpose(i);
+        }
+        return true;
+      }
+    }
+    return false; //No element found if we leave for loop without return
   }
 
   @Override

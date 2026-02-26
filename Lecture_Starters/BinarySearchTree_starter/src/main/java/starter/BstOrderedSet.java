@@ -44,7 +44,51 @@ public class BstOrderedSet<T extends Comparable<T>> implements OrderedSet<T> {
 
   @Override
   public void remove(T t) {
-    // TODO Implement me!
+    remove(root, t);
+  }
+
+  //node is root of subtree, always call as follows: subtree = remove(subtree, t);
+  private Node<T> remove(Node<T> node, T t) {
+    //If node is null, base case: nothing to remove (element not present)
+    if (node != null) {
+      int comparisonResult = t.compareTo(node.data);
+      if (comparisonResult < 0) {
+        node.left = remove(node.left, t);
+      } else if (comparisonResult > 0) {
+        node.right = remove(node.right, t);
+      }  else {
+        node = removeSubtreeRoot(node);
+      }
+    }
+    return node;
+  }
+
+  private Node<T> removeSubtreeRoot(Node<T> node) {
+    if  (node.left == null) {
+      node = node.right;
+      numElements--;
+    } else if (node.right == null) {
+      node = node.left;
+      numElements--;
+    } else { //General case, remove smallest value of right subtree and replace node.data with it
+      node.right = popSmallest(node.right, node);
+    }
+
+    return node;
+  }
+
+  //call in the form subtree = popSmallest(subtree, receiveSmallest);
+  private Node<T> popSmallest(Node<T> subtree, Node<T> receiveSmallest) {
+
+    //base case: left child is null --> subtree root holds smallest value
+    if (subtree.left == null) {
+      receiveSmallest.data = subtree.data;
+      subtree = subtree.right;
+      numElements--;
+    } else {
+      subtree.left = popSmallest(subtree.left, receiveSmallest);
+    }
+    return subtree;
   }
 
   @Override
@@ -114,5 +158,8 @@ public class BstOrderedSet<T extends Comparable<T>> implements OrderedSet<T> {
     System.out.println(bst.size());
     System.out.println(bst.has(13));
     System.out.println(bst.has(23));
+
+    bst.remove(13);
+    bst.remove(23);
   }
 }
