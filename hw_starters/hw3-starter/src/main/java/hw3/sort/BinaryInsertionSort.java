@@ -49,20 +49,18 @@ public class BinaryInsertionSort<T extends Comparable<T>> implements SortingAlgo
   //Takes in list and i and performs binary search between 0 and i
   private int insert(SortableList<T> list, int index) {
     int front = 0;
-    int back = index;
+    int back = index - 1;
     Position currentPos = list.getPosition(index);
     int middle = (front + back) / 2;
 
-    while (front < back) {
+    while (front <= back) {
       middle = (front + back) / 2;
       Position midPos = list.getPosition(middle);
       int comparison = list.compare(currentPos, midPos);
       if (comparison < 0) {
-        back = middle;
-      } else if (comparison > 0) {
-        front = middle + 1;
-      } else  {
-        return middle;
+        back = middle - 1;
+      } else { //Handle if comparison is >= 0
+        front = middle + 1; //Try to find element right before where it would belong or end of equal code block
       }
     }
     return front; //If here, then front or back was updated but middle is stale, so return front

@@ -44,7 +44,7 @@ public class OptimizedBubbleSort<T extends Comparable<T>> implements SortingAlgo
   }
 
   /**
-   * Helper method to check if two elements at a position need to be swapped and swap if needed
+   * Helper method to check if two elements at a position need to be swapped and swap if needed.
    * @param list the sortable list upon which the algorithm is working
    * @param j the current index during the pass
    * @return boolean value containing whether a swap was performed

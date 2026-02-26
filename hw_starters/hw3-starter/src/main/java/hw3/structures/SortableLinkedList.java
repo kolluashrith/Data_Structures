@@ -178,7 +178,7 @@ public class SortableLinkedList<T extends Comparable<T>>
   private class SortableLinkedListIterator implements Iterator<Position> {
     LinkPosition<T> currNode;
 
-    public SortableLinkedListIterator() {
+    SortableLinkedListIterator() {
       currNode = sentinel.next;
     }
 

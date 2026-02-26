@@ -68,7 +68,7 @@ public class LinkedListBag<T extends Comparable<T>> implements Bag<T>, Performan
 
 
   /**
-   * Moves the given node to the front of the list
+   * Moves the given node to the front of the list.
    * @param previous node before current node being sent to front
    * @param current node being sent to front
    */
