@@ -3,6 +3,9 @@ package starter;
 import java.util.Iterator;
 
 public class LinkedSet<T> implements Set<T> {
+
+  private int size;
+
   @Override
   public void insert(T t) {
     // TODO: Implement me!

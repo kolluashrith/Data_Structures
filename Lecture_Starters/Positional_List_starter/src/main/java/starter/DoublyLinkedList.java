@@ -25,7 +25,7 @@ public class DoublyLinkedList<T> {
   }
 
   public DoublyLinkedList() {
-    head = new Node<>(null, this);
+    head = new Node<>(null, this); //Sentinel Nodes to remove edge case handling
     tail = new Node<>(null, this);
     head.next = tail;
     tail.prev = head;
