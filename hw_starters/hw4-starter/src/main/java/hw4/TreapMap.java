@@ -2,6 +2,7 @@ package hw4;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Stack;
 
 /**
  * Map implemented as a Treap.
@@ -16,16 +17,64 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
   /*** Do not change variable name of 'root'. ***/
   private Node<K, V> root;
 
+  private int size;
+
   /**
    * Make a TreapMap.
    */
   public TreapMap() {
     rand = new Random();
+    size = 0;
   }
 
   @Override
   public void insert(K k, V v) throws IllegalArgumentException {
-    // TODO Implement Me!
+    if (k == null) {
+      throw new IllegalArgumentException("cannot handle null key");
+    }
+    root = insert(root, k, v);
+    size++;
+  }
+
+  private Node<K, V> insert(Node<K, V> n, K k, V v) {
+    if (n == null) {
+      return new Node<>(k, v);
+    }
+
+    int cmp = k.compareTo(n.key);
+    if (cmp < 0) {
+      n.left = insert(n.left, k, v);
+      if (n.left.priority > n.priority) {
+        n = rightRotate(n);
+      }
+    } else if (cmp > 0) {
+      n.right = insert(n.right, k, v);
+      if (n.right.priority > n.priority) {
+        n = leftRotate(n);
+      }
+    } else {
+      throw new IllegalArgumentException("duplicate key " + k);
+    }
+
+    return n;
+  }
+
+  private Node<K, V> leftRotate(Node<K, V> subtreeroot) {
+    Node<K, V> child = subtreeroot.right;
+    subtreeroot.right = child.left;
+    child.left = subtreeroot;
+    subtreeroot = child;
+
+    return subtreeroot;
+  }
+
+  private Node<K, V> rightRotate(Node<K, V> subtreeroot) {
+    Node<K, V> child = subtreeroot.left;
+    subtreeroot.left = child.right;
+    child.right = subtreeroot;
+    subtreeroot = child;
+
+    return subtreeroot;
   }
 
   @Override
@@ -53,14 +102,12 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
 
   @Override
   public int size() {
-    // TODO Implement Me!
-    return 0;
+    return size;
   }
 
   @Override
   public Iterator<K> iterator() {
-    // TODO Implement Me!
-    return null;
+    return new InorderIterator();
   }
 
   /*** Do not change this function's name or modify its code. ***/
@@ -94,6 +141,14 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
       priority = generateRandomInteger();
     }
 
+    //Test constructor to set priorities
+    Node(K k, V v, int priority) {
+      // left and right default to null
+      key = k;
+      value = v;
+      this.priority = priority;
+    }
+
     // Use this function to generate random values
     // to use as node priorities as you insert new
     // nodes into your TreapMap.
@@ -117,7 +172,37 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
       return right;
     }
 
-    // Feel free to add whatever you want to the Node class (e.g. new fields).
-    // Just avoid changing any existing names, deleting any existing variables, or modifying the overriding methods.
   }
-}
+
+  // Iterative in-order traversal over the keys
+  private class InorderIterator implements Iterator<K> {
+    private final Stack<Node<K, V>> stack;
+
+    InorderIterator() {
+      stack = new Stack<>();
+      pushLeft(root);
+    }
+
+    private void pushLeft(Node<K, V> curr) {
+      while (curr != null) {
+        stack.push(curr);
+        curr = curr.left;
+      }
+    }
+
+    @Override
+    public boolean hasNext() {
+      return !stack.isEmpty();
+    }
+
+    @Override
+    public K next() {
+      Node<K, V> top = stack.pop();
+      pushLeft(top.right);
+      return top.key;
+    }
+  }
+
+  // Feel free to add whatever you want to the Node class (e.g. new fields).
+  // Just avoid changing any existing names, deleting any existing variables, or modifying the overriding methods.
+  }
