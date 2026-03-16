@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class PriorityQueueTest {
 
-  private PriorityQueue<Integer> pq;
+  protected PriorityQueue<Integer> pq;
 
   @BeforeEach
   void setUp() {

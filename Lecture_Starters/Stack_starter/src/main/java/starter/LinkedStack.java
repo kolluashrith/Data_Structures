@@ -1,7 +1,7 @@
 package starter;
 
 import exceptions.EmptyException;
-
+@SuppressWarnings("all")
 /**
  * Stack ADT implemented using linked nodes.
  *
@@ -20,22 +20,30 @@ public class LinkedStack<T> implements Stack<T> {
 
     @Override
     public boolean empty() {
-        return false; // TODO: Implement me!
+        return list == null;
     }
 
     @Override
     public T top() throws EmptyException {
-        return null; // TODO: Implement me!
+        if (!empty()) {
+            return list.data;
+        }
+        else {
+            throw new EmptyException();
+        }
     }
 
     @Override
     public void pop() throws EmptyException {
-        // TODO: Implement me!
+        list = list.next;
     }
 
     @Override
     public void push(T t) {
-        // TODO: Implement me!
+        Node<T> newNode = new Node<>();
+        newNode.data = t;
+        newNode.next = list;
+        list = newNode;
     }
 
     private static class Node<T> {
