@@ -1,4 +1,23 @@
 # Discussion
+**Part 1:**
+BENCHMARKING RESULTS, RAW DATA:
+--------Benchmarking with unsorted list----------
+For ArrayMap, the mean running time is 516ms and the median running time is 483ms for a total of 5 runs.
+For BinarySearchTreeMap, the mean running time is 22ms and the median running time is 19ms for a total of 5 runs.
+For AvlTreeMap, the mean running time is 19ms and the median running time is 18ms for a total of 5 runs.
+For TreapMap, the mean running time is 26ms and the median running time is 26ms for a total of 5 runs.
 
+--------Benchmarking with sorted list----------
+For ArrayMap, the mean running time is 2486ms and the median running time is 2500ms for a total of 5 runs.
+For BinarySearchTreeMap, the mean running time is 3254ms and the median running time is 3254ms for a total of 5 runs.
+For AvlTreeMap, the mean running time is 11ms and the median running time is 11ms for a total of 5 runs.
+For TreapMap, the mean running time is 7ms and the median running time is 8ms for a total of 5 runs.
 
+When we benchmarked with unsorted data, the ordering of the words was dependent on the order in which they naturally show up in the text. This also means that it is very unlikely for the regular BinarySearchTreeMap to degenerate into a linear linked list since the words are not in order. This is the result that we see, with this implementation actually outperforming TreapMap. However, the AvlTreeMap implementation still performs better than the BinarySearchTreeMap, suggesting that the balancing helps to reduce the overall time spent on searching for and updating key-value pairs. Because of the O(n^2) time complexity of the ArrayMap implementation, arising from the need to iterate through each and every element to find the right key, this implementation consistently performs worse than the others. We see more interesting results when we benchmark with a sorted list. When the list is sorted, insertions of new keys in the BinarySearchTreeMap always occur to the left of every subtree, causing the tree to degenerate into a linear structure. Every key access would have to repeatedly traverse to the end of the singular branch, causing this implementation to perform even worse than the ArrayMap. With a linear linked list, which is what we expect, this would become O(n^2) as well. On the other hand, the near-perfect balancing guaranteed by AvlTreeMap ensures that the running time is minimally affected. The probabilistic balancing by TreapMap also has an extremely high likelihood of preventing the otherwise linear linked list structure from developing, driving down runtime to actually outperform AvlTreeMap. 
+
+**Part 2:**
+
+Strategy 1 is correct because this is exactly how a binary heap is intended to work. Every time an element is removed, it represents the removal of the best element in the list. In this case, when the heap is implemented as a max heap, every "best" element will always be the highest value in the list. Thus, removing the best element k times and then storing the kth removal will yield the kth best element. To populate the heap, O(n lg n) time and O(n) space is needed to add each and every element to the heap, and adding each element requires bubbling up the depth of the heap at worst. Then, each removal would take O(lg n) time and O(1) space because the tree would have a max height of ceil(lg n), and removal would at worst require traversing as deep as the tree goes. With k removals, we get O(k lg n) time. O((n+k) lg n) simplifies to O(n lg n). In total, this strategy would be O(n lg n) time and O(n) space.
+
+Strategy 2 is also correct because this method still guarantees that the kth best element becomes stored as the best element of the heap. When implemented as a min heap, the element with the lowest value is stored at the top. With the described algorithm in which the least-valued element is overwritten as necessary across n-k passes, it is guaranteed that the resulting heap will contain the k best elements in the list. All lower elements would have been overwritten since it is always guaranteed that the lowest element will be at the top. Also, with k elements in the heap, the element at the top of the min heap would have the least value, so it would be the kth highest in the list. Therefore, this strategy is also valid. Populating the k elements would take O(k) time while checking and removing when a larger element is found would take O((n-k) * lg k) time. Since the heap only contains k elements, the space would be O(k) while the removals and replacements would still be constant O(1) space operations. O(k) + O((n-k) * lg k) = O(n lg k).
 

@@ -4,9 +4,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class BSTMapPerformanceTest {
 
@@ -14,12 +12,25 @@ public class BSTMapPerformanceTest {
   public static boolean VERBOSE = true;
 
   // Update this to any other data file for benchmarking experiments.  `src/test/resources` contains other files; you can provide your own if you'd like
-  public static String DATA_FILE = "hotel_california.txt";
+  public static String DATA_FILE = "pride_and_prejudice.txt";
 
   public static void main(String[] args) throws FileNotFoundException {
 
+    List<String> wordList = readWords();
 
-    // TODO: Design an experiment that will let you measure the performance of your two BBST map implementations, and compare them against the (unbalanced) BSTMap and ArrayMap implementations provided
+    //Benchmarking for 2 metrics:
+      // 1. Testing Time To Populate Entire Map
+      // 2. Testing Time to Look Up Random Elements
+
+    System.out.println("--------Benchmarking with unsorted list----------");
+    insertBenchmark(wordList);
+
+   //Now try sorting it
+      //
+    System.out.println("\n--------Benchmarking with sorted list----------");
+    Collections.sort(wordList);
+    insertBenchmark(wordList);
+
 
     // Hints:
     // * You'll need a fair amount of data to get meaningful results.  Building a map of ten or twenty elements and then looking up elements will not show interesting results.
@@ -28,6 +39,79 @@ public class BSTMapPerformanceTest {
     // * Consider whether the order in which elements are inserted into the map matters
     // * We have provided some code below which will handle reading in all of the words in a file, which you may use for a dataset to test your maps.  Your test results *SHOULD NOT* include the time to read the file
 
+  }
+
+  private static void insertBenchmark(List<String> wordList) {
+    long[][] mapTimes = new long[4][5];
+    String[] mapNames = {"ArrayMap", "BinarySearchTreeMap", "AvlTreeMap", "TreapMap"};
+
+    //ArrayMap Benchmarking
+    for (int i = 0; i < 5; i++) {
+      //Clear after every run
+      Map<String, Integer> map = new ArrayMap<>();
+      long startTime = System.nanoTime();
+
+      for (String word : wordList) {
+        addWord(map, word);
+      }
+
+      //Get elapsed time
+      mapTimes[0][i] = (System.nanoTime() - startTime)/1000000;
+    }
+
+    //BinarySearchTreeMap Benchmarking
+    for (int i = 0; i < 5; i++) {
+      //Clear after every run
+      Map<String, Integer> map = new BinarySearchTreeMap<>();
+      long startTime = System.nanoTime();
+
+      for (String word : wordList) {
+        addWord(map, word);
+      }
+
+      //Get elapsed time
+      mapTimes[1][i] = (System.nanoTime() - startTime)/1000000;
+    }
+
+    //AVLTreeMap Benchmarking
+    for (int i = 0; i < 5; i++) {
+      //Clear after every run
+      Map<String, Integer> map = new AvlTreeMap<>();
+      long startTime = System.nanoTime();
+
+      for (String word : wordList) {
+        addWord(map, word);
+      }
+
+      //Get elapsed time
+      mapTimes[2][i] = (System.nanoTime() - startTime)/1000000;
+    }
+
+    //TreapMap Benchmarking
+    for (int i = 0; i < 5; i++) {
+      //Clear after every run
+      Map<String, Integer> map = new TreapMap<>();
+      long startTime = System.nanoTime();
+
+      for (String word : wordList) {
+        addWord(map, word);
+      }
+
+      //Get elapsed time
+      mapTimes[3][i] = (System.nanoTime() - startTime)/1000000;
+    }
+
+    for (int i = 0; i < 4; i++) {
+      Arrays.sort(mapTimes[i]);
+
+      long averageTime = 0;
+      for (int k = 0; k < 5; k++) {
+        averageTime += mapTimes[i][k];
+      }
+      averageTime /= 5;
+      System.out.println("For " + mapNames[i] + ", the mean running time is " + averageTime +
+              "ms and the median running time is " + mapTimes[i][2] + "ms for a total of 5 runs.");
+    }
   }
 
   /**
@@ -63,10 +147,10 @@ public class BSTMapPerformanceTest {
       .replace("classes", "resources");
 
 
-    Path resourceDirectory = Paths.get(path.substring(1), DATA_FILE);
+    //Path resourceDirectory = Paths.get(path.substring(1), DATA_FILE);
 
     // TODO: If you're not running on Windows, use this instead
-    //Path resourceDirectory = Paths.get(path, DATA_FILE);
+    Path resourceDirectory = Paths.get(path, DATA_FILE);
 
 
     return resourceDirectory;

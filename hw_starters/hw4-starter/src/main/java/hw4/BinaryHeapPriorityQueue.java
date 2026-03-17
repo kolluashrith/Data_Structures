@@ -1,8 +1,12 @@
 package hw4;
 
 import exceptions.EmptyException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import java.util.*;
 
 /**
  * Priority queue implemented as a binary heap with a ranked array representation.
@@ -11,7 +15,7 @@ import java.util.*;
  */
 public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements PriorityQueue<T> {
   private final List<T> heap;
-  private Comparator<T> cmp;
+  private final Comparator<T> cmp;
 
   /**
    * Make a BinaryHeapPriorityQueue.
@@ -36,20 +40,19 @@ public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements Priorit
     heap.add(t);
     int newElementLoc = heap.size() - 1;
 
-    T parent = heap.get(newElementLoc / 2);
-    if (parent == null) {
+    int parentindex = newElementLoc / 2;
+    if (parentindex <= 0) {
       return;
     } else {
-      int comparison = cmp.compare(t, parent); //Compare with parent
-      while (comparison < 0) {
-        T tempParent = heap.get(newElementLoc / 2);
+      while (newElementLoc > 1 && cmp.compare(t, heap.get(parentindex)) < 0) {
+        T parent = heap.get(parentindex);
         heap.set(newElementLoc / 2, t);
-        heap.set(newElementLoc, tempParent);
+        heap.set(newElementLoc, parent);
         newElementLoc = newElementLoc / 2;
-        if (newElementLoc == 1) { //Make sure we haven't reached end
-          break;
+        parentindex = newElementLoc / 2;
+        if (parentindex == 0) {
+          return;
         }
-        comparison = cmp.compare(t, heap.get(newElementLoc / 2));
       }
     }
   }
@@ -83,7 +86,7 @@ public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements Priorit
       } else {
         return;
       }
-    } while (currentIndex < heap.size() - 1);
+    } while (currentIndex * 2 < heap.size()); //Check until no children are left
   }
 
   //Swap with the smallest child
