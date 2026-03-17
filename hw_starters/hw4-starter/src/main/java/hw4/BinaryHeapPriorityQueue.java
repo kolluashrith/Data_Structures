@@ -97,7 +97,7 @@ public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements Priorit
   private int popTop(T lastElement) {
     heap.set(1, lastElement);
     heap.remove(heap.size() - 1);
-    return 1;
+    return 1; //Set current index in calling function to 1
   }
 
   //Find the minimum child index

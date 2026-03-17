@@ -27,6 +27,15 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
     size = 0;
   }
 
+  /**
+   * TreapMap overloaded constructor for testing purposes.
+   * @param test pass any boolean to indicate testing
+   */
+  public TreapMap(boolean test) {
+    rand = new FakeRandom();
+    size = 0;
+  }
+
   @Override
   public void insert(K k, V v) throws IllegalArgumentException {
     if (k == null) {
@@ -44,12 +53,12 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
     int cmp = k.compareTo(n.key);
     if (cmp < 0) {
       n.left = insert(n.left, k, v);
-      if (n.left.priority > n.priority) {
+      if (n.left.priority < n.priority) {
         n = rightRotate(n);
       }
     } else if (cmp > 0) {
       n.right = insert(n.right, k, v);
-      if (n.right.priority > n.priority) {
+      if (n.right.priority < n.priority) {
         n = leftRotate(n);
       }
     } else {
@@ -79,25 +88,107 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
 
   @Override
   public V remove(K k) throws IllegalArgumentException {
-    // TODO Implement Me!
-    return null;
+
+    Node<K, V> node = findForSure(k);
+
+    V value = node.value;
+    root = remove(root, k);
+    size--;
+    return value;
+  }
+
+  //Recurse into tree to remove node
+  private Node<K, V> remove(Node<K, V> subtreeRoot, K key) {
+
+    int cmp = key.compareTo(subtreeRoot.key);
+
+    if (cmp < 0) {
+      subtreeRoot.left = remove(subtreeRoot.left, key);
+    } else if  (cmp > 0) {
+      subtreeRoot.right = remove(subtreeRoot.right, key);
+    } else {
+      subtreeRoot.priority = Integer.MAX_VALUE;
+      //Treap-specific handling of priorities while removing
+      subtreeRoot = removeWithRotations(subtreeRoot, key);
+
+    }
+    return subtreeRoot;
+  }
+
+  //Treap-specific handling of priorities while removing
+  private Node<K, V> removeWithRotations(Node<K, V> nodeToRemove, K key) {
+
+    //Base case when the node to remove becomes a leaf
+    if (nodeToRemove.left == null && nodeToRemove.right == null) {
+      return null;
+    } else if (nodeToRemove.left == null) {
+      //If only right child exists, rotate left and remove from left
+      nodeToRemove = leftRotate(nodeToRemove);
+      nodeToRemove.left = remove(nodeToRemove.left, key);
+    } else if (nodeToRemove.right == null) {
+      //If only left child exists, rotate right and remove from right
+      nodeToRemove = rightRotate(nodeToRemove);
+      nodeToRemove.right = remove(nodeToRemove.right, key);
+    } else {
+      //Two children exist, need to rotate in direction of higher priority child
+      if (nodeToRemove.left.priority < nodeToRemove.right.priority) {
+        nodeToRemove = rightRotate(nodeToRemove);
+        nodeToRemove.right = remove(nodeToRemove.right, key);
+      } else {
+        nodeToRemove = leftRotate(nodeToRemove);
+        nodeToRemove.left = remove(nodeToRemove.left, key);
+      }
+    }
+    return nodeToRemove;
   }
 
   @Override
   public void put(K k, V v) throws IllegalArgumentException {
-    // TODO Implement Me!
+    Node<K, V> n = findForSure(k);
+    n.value = v;
   }
 
   @Override
   public V get(K k) throws IllegalArgumentException {
-    // TODO Implement Me!
+    Node<K, V> n = findForSure(k);
+    return n.value;
+  }
+
+  // Return node for given key,
+  // throw an exception if the key is not in the tree.
+  private Node<K, V> findForSure(K k) {
+    Node<K, V> n = find(k);
+    if (n == null) {
+      throw new IllegalArgumentException("cannot find key " + k);
+    }
+    return n;
+  }
+
+  // Return node for given key.
+  private Node<K, V> find(K k) {
+    if (k == null) {
+      throw new IllegalArgumentException("cannot handle null key");
+    }
+    Node<K, V> n = root;
+    while (n != null) {
+      int cmp = k.compareTo(n.key);
+      if (cmp < 0) {
+        n = n.left;
+      } else if (cmp > 0) {
+        n = n.right;
+      } else {
+        return n;
+      }
+    }
     return null;
   }
 
   @Override
   public boolean has(K k) {
-    // TODO Implement Me!
-    return false;
+    if (k == null) {
+      return false;
+    }
+    return find(k) != null;
   }
 
   @Override
@@ -139,14 +230,6 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
       key = k;
       value = v;
       priority = generateRandomInteger();
-    }
-
-    //Test constructor to set priorities
-    Node(K k, V v, int priority) {
-      // left and right default to null
-      key = k;
-      value = v;
-      this.priority = priority;
     }
 
     // Use this function to generate random values
@@ -203,6 +286,25 @@ public class TreapMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
     }
   }
 
+  private static class FakeRandom extends Random {
+    private final int[] values;
+    private int curr;
+
+    FakeRandom() {
+      values = new int[]{16, 3, 2, 13, 6, 18, 17, 10, 15, 1, 14, 7, 4, 9, 12, 5, 8, 11, 19};
+      curr = 0;
+    }
+
+    @Override
+    public int nextInt() {
+      //Allows for integer array looping so we don't run out numbers to "randomly" generate
+      if (curr >= values.length) {
+        curr = 0;
+      }
+      return values[curr++];
+    }
+  }
+
   // Feel free to add whatever you want to the Node class (e.g. new fields).
   // Just avoid changing any existing names, deleting any existing variables, or modifying the overriding methods.
-  }
+}

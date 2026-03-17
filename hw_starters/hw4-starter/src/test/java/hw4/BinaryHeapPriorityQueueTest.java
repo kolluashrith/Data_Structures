@@ -28,11 +28,42 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
   }
 
   @Test
-  void testInsertThreeElements() {
-    pq.insert(1);
-    pq.insert(2);
-    pq.insert(3);
-    assertFalse(pq.empty());
+  void testInsertThreeElementsInOrder() {
+    int[] actual = {1, 2, 3};
+    for (int i : actual) {
+      pq.insert(i);
+    }
+    assertTrue(orderIsPreserved(actual));
+  }
+
+  private boolean orderIsPreserved(int[] actualOrder) {
+    int index = 0;
+    for (int value : pq) {
+      if (!(actualOrder[index++] == value)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Test
+  void testInsertThreeElementsOutOfOrder() {
+    int[] reverse = {3, 2, 1};
+    int[] actual = {1, 3, 2}; //3 should swap with 2 and then 1 should swap with 2
+    for (int i : reverse) {
+      pq.insert(i);
+    }
+    assertTrue(orderIsPreserved(actual));
+  }
+
+  @Test
+  void testInsertFiveElementsOutOfOrder() {
+    int[] random = {3, 5, 1, 9, 3, 2, 1};
+    int[] actual = {1, 3, 1, 9, 5, 3, 2};
+    for (int i : random) {
+      pq.insert(i);
+    }
+    assertTrue(orderIsPreserved(actual));
   }
 
   @Test

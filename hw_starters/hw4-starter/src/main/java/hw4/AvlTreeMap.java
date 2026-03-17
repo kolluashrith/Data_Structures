@@ -170,6 +170,7 @@ public class AvlTreeMap<K extends Comparable<K>, V> implements OrderedMap<K, V> 
     // then remove the predecessor node (structural change).
     node.left = remove(node.left, toReplaceWith);
 
+    //AVL-specific helper method calls to update swapped node following structural change
     updateAll(node);
     if (Math.abs(node.balanceFactor) > 1) {
       node = handleRotations(node);

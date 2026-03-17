@@ -2,7 +2,7 @@ package hw4;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * In addition to the tests in BinarySearchTreeMapTest (and in OrderedMapTest & MapTest),
@@ -237,6 +237,44 @@ public class AvlTreeMapTest extends BinarySearchTreeMapTest {
             "2:b 4:d"
     };
     assertEquals((String.join("\n", expected) + "\n"), map.toString());
+  }
+
+  @Test
+  public void getValidKey() {
+    map.insert("3", "c");
+    map.insert("2", "b");
+    map.insert("4", "d");
+    map.insert("1", "a");
+    map.insert("5", "e");
+    map.insert("6", "f");
+
+    assertTrue("e".equals(map.get("5")));
+  }
+
+  @Test
+  public void hasChecksMembership() {
+    map.insert("3", "c");
+    map.insert("2", "b");
+    map.insert("4", "d");
+    map.insert("1", "a");
+    map.insert("5", "e");
+    map.insert("6", "f");
+
+    assertTrue(map.has("5"));
+    assertTrue(map.has("6"));
+    assertFalse(map.has("7"));
+  }
+
+  @Test
+  public void sizeReturnsCorrectSize() {
+    map.insert("3", "c");
+    map.insert("2", "b");
+    map.insert("4", "d");
+    map.insert("1", "a");
+    map.insert("5", "e");
+    map.insert("6", "f");
+
+    assertEquals(6, map.size());
   }
 
 }
