@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Priority queue implemented as a binary heap with a ranked array representation.
- *
+ * Implemented as a max-heap.
  * @param <T> Element type.
  */
 public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements PriorityQueue<T> {
@@ -44,7 +44,7 @@ public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements Priorit
     if (parentindex <= 0) {
       return;
     } else {
-      while (newElementLoc > 1 && cmp.compare(t, heap.get(parentindex)) < 0) {
+      while (newElementLoc > 1 && cmp.compare(t, heap.get(parentindex)) > 0) {
         T parent = heap.get(parentindex);
         heap.set(newElementLoc / 2, t);
         heap.set(newElementLoc, parent);
@@ -73,13 +73,13 @@ public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements Priorit
 
     do {
       int leftChildIndex = currentIndex * 2;
-      //Find the minimum child index
-      int minIndex = findMinimumChildIndex(leftChildIndex, leftChildIndex + 1);
-      if (minIndex != -1) {
-        int comparison = cmp.compare(lastElement, heap.get(minIndex));
-        if (comparison > 0) {
-          swapSmallest(currentIndex, minIndex);
-          currentIndex = minIndex;
+      //Find the maximum child index
+      int maxIndex = findMaximumChildIndex(leftChildIndex, leftChildIndex + 1);
+      if (maxIndex != -1) {
+        int comparison = cmp.compare(lastElement, heap.get(maxIndex));
+        if (comparison < 0) {
+          swapBiggest(currentIndex, maxIndex);
+          currentIndex = maxIndex;
         } else {
           return;
         }
@@ -89,10 +89,10 @@ public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements Priorit
     } while (currentIndex * 2 < heap.size()); //Check until no children are left
   }
 
-  //Swap with the smallest child
-  private void swapSmallest(int currentIndex, int minIndex) {
-    T temp = heap.get(minIndex);
-    heap.set(minIndex, heap.get(currentIndex));
+  //Swap with the biggest child
+  private void swapBiggest(int currentIndex, int maxIndex) {
+    T temp = heap.get(maxIndex);
+    heap.set(maxIndex, heap.get(currentIndex));
     heap.set(currentIndex, temp);
   }
 
@@ -104,13 +104,13 @@ public class BinaryHeapPriorityQueue<T extends Comparable<T>> implements Priorit
   }
 
   //Find the minimum child index
-  private int findMinimumChildIndex(int leftChildIndex, int rightChildIndex) {
+  private int findMaximumChildIndex(int leftChildIndex, int rightChildIndex) {
     if (leftChildIndex >= heap.size()) { //No children case
       return -1;
     } else if (rightChildIndex >= heap.size()) { //One child case
       return leftChildIndex;
     } else {
-      return (cmp.compare(heap.get(leftChildIndex), heap.get(rightChildIndex)) <= 0) ? leftChildIndex : rightChildIndex;
+      return (cmp.compare(heap.get(leftChildIndex), heap.get(rightChildIndex)) >= 0) ? leftChildIndex : rightChildIndex;
     }
   }
 

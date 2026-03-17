@@ -12,7 +12,7 @@ public class BSTMapPerformanceTest {
   public static boolean VERBOSE = true;
 
   // Update this to any other data file for benchmarking experiments.  `src/test/resources` contains other files; you can provide your own if you'd like
-  public static String DATA_FILE = "pride_and_prejudice.txt";
+  public static String DATA_FILE = "hotel_california.txt";
 
   public static void main(String[] args) throws FileNotFoundException {
 
@@ -25,8 +25,7 @@ public class BSTMapPerformanceTest {
     System.out.println("--------Benchmarking with unsorted list----------");
     insertBenchmark(wordList);
 
-   //Now try sorting it
-      //
+    //Repeat population benchmark with sorted word list
     System.out.println("\n--------Benchmarking with sorted list----------");
     Collections.sort(wordList);
     insertBenchmark(wordList);
@@ -42,11 +41,11 @@ public class BSTMapPerformanceTest {
   }
 
   private static void insertBenchmark(List<String> wordList) {
-    long[][] mapTimes = new long[4][5];
+    long[][] mapTimes = new long[4][11];
     String[] mapNames = {"ArrayMap", "BinarySearchTreeMap", "AvlTreeMap", "TreapMap"};
 
     //ArrayMap Benchmarking
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 11; i++) {
       //Clear after every run
       Map<String, Integer> map = new ArrayMap<>();
       long startTime = System.nanoTime();
@@ -60,7 +59,7 @@ public class BSTMapPerformanceTest {
     }
 
     //BinarySearchTreeMap Benchmarking
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 11; i++) {
       //Clear after every run
       Map<String, Integer> map = new BinarySearchTreeMap<>();
       long startTime = System.nanoTime();
@@ -74,7 +73,7 @@ public class BSTMapPerformanceTest {
     }
 
     //AVLTreeMap Benchmarking
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 11; i++) {
       //Clear after every run
       Map<String, Integer> map = new AvlTreeMap<>();
       long startTime = System.nanoTime();
@@ -88,7 +87,7 @@ public class BSTMapPerformanceTest {
     }
 
     //TreapMap Benchmarking
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 11; i++) {
       //Clear after every run
       Map<String, Integer> map = new TreapMap<>();
       long startTime = System.nanoTime();
@@ -105,12 +104,12 @@ public class BSTMapPerformanceTest {
       Arrays.sort(mapTimes[i]);
 
       long averageTime = 0;
-      for (int k = 0; k < 5; k++) {
+      for (int k = 0; k < 11; k++) {
         averageTime += mapTimes[i][k];
       }
-      averageTime /= 5;
+      averageTime /= 11;
       System.out.println("For " + mapNames[i] + ", the mean running time is " + averageTime +
-              "ms and the median running time is " + mapTimes[i][2] + "ms for a total of 5 runs.");
+              "ms and the median running time is " + mapTimes[i][5] + "ms for a total of 11 runs.");
     }
   }
 

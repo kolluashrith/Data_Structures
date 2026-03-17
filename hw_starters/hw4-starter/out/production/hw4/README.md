@@ -1,19 +1,49 @@
 # Discussion
 **Part 1:**
-BENCHMARKING RESULTS, RAW DATA:
+
+BENCHMARKING RESULTS, RAW DATA FOR PRIDE_AND_PREJUDICE:
 --------Benchmarking with unsorted list----------
-For ArrayMap, the mean running time is 516ms and the median running time is 483ms for a total of 5 runs.
-For BinarySearchTreeMap, the mean running time is 22ms and the median running time is 19ms for a total of 5 runs.
-For AvlTreeMap, the mean running time is 19ms and the median running time is 18ms for a total of 5 runs.
-For TreapMap, the mean running time is 26ms and the median running time is 26ms for a total of 5 runs.
+For ArrayMap, the mean running time is 513ms and the median running time is 480ms for a total of 11 runs.
+For BinarySearchTreeMap, the mean running time is 19ms and the median running time is 19ms for a total of 11 runs.
+For AvlTreeMap, the mean running time is 18ms and the median running time is 18ms for a total of 11 runs.
+For TreapMap, the mean running time is 26ms and the median running time is 27ms for a total of 11 runs.
 
 --------Benchmarking with sorted list----------
-For ArrayMap, the mean running time is 2486ms and the median running time is 2500ms for a total of 5 runs.
-For BinarySearchTreeMap, the mean running time is 3254ms and the median running time is 3254ms for a total of 5 runs.
-For AvlTreeMap, the mean running time is 11ms and the median running time is 11ms for a total of 5 runs.
-For TreapMap, the mean running time is 7ms and the median running time is 8ms for a total of 5 runs.
+For ArrayMap, the mean running time is 2459ms and the median running time is 2434ms for a total of 11 runs.
+For BinarySearchTreeMap, the mean running time is 3258ms and the median running time is 3238ms for a total of 11 runs.
+For AvlTreeMap, the mean running time is 11ms and the median running time is 11ms for a total of 11 runs.
+For TreapMap, the mean running time is 8ms and the median running time is 8ms for a total of 11 runs.
 
-When we benchmarked with unsorted data, the ordering of the words was dependent on the order in which they naturally show up in the text. This also means that it is very unlikely for the regular BinarySearchTreeMap to degenerate into a linear linked list since the words are not in order. This is the result that we see, with this implementation actually outperforming TreapMap. However, the AvlTreeMap implementation still performs better than the BinarySearchTreeMap, suggesting that the balancing helps to reduce the overall time spent on searching for and updating key-value pairs. Because of the O(n^2) time complexity of the ArrayMap implementation, arising from the need to iterate through each and every element to find the right key, this implementation consistently performs worse than the others. We see more interesting results when we benchmark with a sorted list. When the list is sorted, insertions of new keys in the BinarySearchTreeMap always occur to the left of every subtree, causing the tree to degenerate into a linear structure. Every key access would have to repeatedly traverse to the end of the singular branch, causing this implementation to perform even worse than the ArrayMap. With a linear linked list, which is what we expect, this would become O(n^2) as well. On the other hand, the near-perfect balancing guaranteed by AvlTreeMap ensures that the running time is minimally affected. The probabilistic balancing by TreapMap also has an extremely high likelihood of preventing the otherwise linear linked list structure from developing, driving down runtime to actually outperform AvlTreeMap. 
+
+BENCHMARKING RESULTS, RAW DATA FOR FEDERALIST01:
+--------Benchmarking with unsorted list----------
+For ArrayMap, the mean running time is 1ms and the median running time is 0ms for a total of 11 runs.
+For BinarySearchTreeMap, the mean running time is 1ms and the median running time is 1ms for a total of 11 runs.
+For AvlTreeMap, the mean running time is 1ms and the median running time is 1ms for a total of 11 runs.
+For TreapMap, the mean running time is 1ms and the median running time is 1ms for a total of 11 runs.
+
+--------Benchmarking with sorted list----------
+For ArrayMap, the mean running time is 2ms and the median running time is 2ms for a total of 11 runs.
+For BinarySearchTreeMap, the mean running time is 4ms and the median running time is 4ms for a total of 11 runs.
+For AvlTreeMap, the mean running time is 0ms and the median running time is 0ms for a total of 11 runs.
+For TreapMap, the mean running time is 0ms and the median running time is 0ms for a total of 11 runs.
+
+BENCHMARKING RESULTS, RAW DATA FOR MOBY_DICK:
+--------Benchmarking with unsorted list----------
+For ArrayMap, the mean running time is 2681ms and the median running time is 2663ms for a total of 11 runs.
+For BinarySearchTreeMap, the mean running time is 40ms and the median running time is 40ms for a total of 11 runs.
+For AvlTreeMap, the mean running time is 38ms and the median running time is 38ms for a total of 11 runs.
+For TreapMap, the mean running time is 56ms and the median running time is 56ms for a total of 11 runs.
+
+--------Benchmarking with sorted list----------
+For ArrayMap, the mean running time is 12787ms and the median running time is 12776ms for a total of 11 runs.
+For BinarySearchTreeMap, the mean running time is 14660ms and the median running time is 14648ms for a total of 11 runs.
+For AvlTreeMap, the mean running time is 22ms and the median running time is 22ms for a total of 11 runs.
+For TreapMap, the mean running time is 16ms and the median running time is 15ms for a total of 11 runs.
+
+BENCHMARKING RESULTS, RAW DATA FOR HOTEL_CALIFORNIA:
+
+When we benchmarked with unsorted data, the ordering of the words was dependent on the order in which they naturally show up in the text. This also means that it is very unlikely for the regular BinarySearchTreeMap to degenerate into a linear linked list since the words are not in order. This is the result that we see, with this implementation actually outperforming TreapMap. However, the AvlTreeMap implementation still performs better than the BinarySearchTreeMap, suggesting that the balancing helps to reduce the overall time spent on searching for and updating key-value pairs. Unsorted, the performance of BinarySearchTreeMap relative to Treap and AvlTreeMap is purely dependent on the natural distribution of words in the text. Given the right distribution, the exclusion of any rotations actually can make the BinarySearchTreeMap perform faster. Because of the O(n^2) time complexity of the ArrayMap implementation, arising from the need to iterate through each and every element to find the right key, this implementation consistently performs worse than the others. We see more interesting results when we benchmark with a sorted list. When the list is sorted, insertions of new keys in the BinarySearchTreeMap always occur to the left of every subtree, causing the tree to degenerate into a linear structure. Every key access would have to repeatedly traverse to the end of the singular branch, causing this implementation to perform even worse than the ArrayMap. With a linear linked list, which is what we expect, this would become O(n^2) as well. On the other hand, the near-perfect balancing guaranteed by AvlTreeMap ensures that the running time is minimally affected. The probabilistic balancing by TreapMap also has an extremely high likelihood of preventing the otherwise linear linked list structure from developing, driving down runtime to actually outperform AvlTreeMap. Whereas before the rotations added more operations and drove up the runtime, with sorted data they helped keep the find functionality optimized, reducing overall runtime when the function is called repeatedly while inserting.
 
 **Part 2:**
 

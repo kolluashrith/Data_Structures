@@ -28,8 +28,8 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
   }
 
   @Test
-  void testInsertThreeElementsInOrder() {
-    int[] actual = {1, 2, 3};
+  void testInsertThreeElementsOutOfOrder() {
+    int[] actual = {3, 2, 1};
     for (int i : actual) {
       pq.insert(i);
     }
@@ -47,9 +47,9 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
   }
 
   @Test
-  void testInsertThreeElementsOutOfOrder() {
-    int[] reverse = {3, 2, 1};
-    int[] actual = {1, 3, 2}; //3 should swap with 2 and then 1 should swap with 2
+  void testInsertThreeElementsInOrder() {
+    int[] reverse = {1, 2, 3};
+    int[] actual = {3, 1, 2}; //2 should swap with 1 and then 3 should swap with 2
     for (int i : reverse) {
       pq.insert(i);
     }
@@ -59,7 +59,7 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
   @Test
   void testInsertFiveElementsOutOfOrder() {
     int[] random = {3, 5, 1, 9, 3, 2, 1};
-    int[] actual = {1, 3, 1, 9, 5, 3, 2};
+    int[] actual = {9, 5, 2, 3, 3, 1, 1};
     for (int i : random) {
       pq.insert(i);
     }
@@ -80,22 +80,22 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
   }
 
   @Test
-  void testBestReturnsCorrectlyWithMultipleElementsInOrder() {
-    //Checking with Min Heap
+  void testBestReturnsCorrectlyWithMultipleElementsOutOfOrder() {
+    //Checking with Max Heap
     pq.insert(1);
     pq.insert(2);
     pq.insert(3);
-    assertEquals(1, pq.best());
+    assertEquals(3, pq.best());
   }
 
   @Test
-  void testBestReturnsCorrectlyWithMultipleElementsOutOfOrder() {
-    //Checking with Min Heap
+  void testBestReturnsCorrectlyWithMultipleElementsInOrder() {
+    //Checking with Max Heap
     pq.insert(3);
     pq.insert(2);
     pq.insert(1);
 
-    assertEquals(1, pq.best());
+    assertEquals(3, pq.best());
   }
 
   @Test
@@ -159,7 +159,7 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
     pq.insert(1);
     pq.insert(1);
 
-    assertEquals(1, pq.best());
+    assertEquals(4, pq.best());
   }
 
   @Test
@@ -170,10 +170,10 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
     pq.insert(1);
 
     pq.remove();
-    assertEquals(1, pq.best());
+    assertEquals(4, pq.best());
 
     pq.remove();
-    assertEquals(4, pq.best());
+    assertEquals(1, pq.best());
   }
 
   @Test
@@ -186,10 +186,10 @@ public class BinaryHeapPriorityQueueTest extends PriorityQueueTest {
     pq.insert(4);
     pq.insert(5);
 
-    assertEquals(1,  pq.best());
+    assertEquals(7,  pq.best());
 
     pq.remove();
-    assertEquals(2, pq.best());
+    assertEquals(6, pq.best());
   }
 
 }
