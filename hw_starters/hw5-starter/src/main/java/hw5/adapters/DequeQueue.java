@@ -22,29 +22,26 @@ public class DequeQueue<T> implements Queue<T> {
 
   @Override
   public void enqueue(T element) {
-    // TODO: Implement me!
+    deque.addLast(element);
   }
 
   @Override
   public void dequeue() {
-    // TODO: Implement me!
+    deque.removeFirst();
   }
 
   @Override
   public T front() {
-    // TODO: Implement me!
-    return null;
+    return deque.peekFirst();
   }
 
   @Override
   public boolean isEmpty() {
-    // TODO: Implement me!
-    return false;
+    return deque.isEmpty();
   }
 
   @Override
   public int size() {
-    // TODO: Implement me!
-    return 0;
+    return deque.size();
   }
 }

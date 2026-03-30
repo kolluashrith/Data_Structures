@@ -22,29 +22,26 @@ public class DequeStack<T> implements Stack<T> {
 
   @Override
   public void push(T element) {
-    // TODO: Implement me!
+    deque.addFirst(element);
   }
 
   @Override
   public void pop() {
-    // TODO: Implement me!
+    deque.removeFirst();
   }
 
   @Override
   public T top() {
-    // TODO: Implement me!
-    return null;
+    return deque.peekFirst();
   }
 
   @Override
   public boolean isEmpty() {
-    // TODO: Implement me!
-    return true;
+    return deque.isEmpty();
   }
 
   @Override
   public int size() {
-    // TODO: Implement me!
-    return 0;
+    return deque.size();
   }
 }
