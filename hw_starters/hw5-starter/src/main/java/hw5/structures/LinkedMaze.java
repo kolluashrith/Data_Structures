@@ -63,11 +63,26 @@ public class LinkedMaze implements Maze {
    * @param height the number of rows in the maze, must be positive
    * @throws IllegalArgumentException if width or height is non-positive
    */
-  public LinkedMaze(int width, int height) {
-    // TODO: Update this implementation
+  public LinkedMaze(int width, int height) throws IllegalArgumentException {
     this.width = width;
     this.height = height;
-    this.topLeft = null;
+
+    if (width <= 0 || height <= 0) {
+      throw new IllegalArgumentException();
+    }
+
+    this.topLeft = new LinkedMazeCell(0, 0);
+    createRowZero(topLeft);
+
+    int currRow = 0;
+    LinkedMazeCell currRowBase = topLeft;
+
+    while (currRow < width - 1) {
+      createNextRow(currRowBase);
+      currRowBase = currRowBase.south;
+      currRow++;
+    }
+
     // Hint: When you construct the maze, for each cell you create,
     // you must make sure to set its pointers to its neighbors.
     // Likewise, you must set the neighbors' pointers back to this cell.
@@ -76,44 +91,106 @@ public class LinkedMaze implements Maze {
     // with an auxiliary space complexity of O(1).
   }
 
+  //Creates top row of maze
+  private void createRowZero(LinkedMazeCell zeroCell) {
+    int curr = 1;
+    LinkedMazeCell currCell = zeroCell;
+    while (curr < width) {
+      currCell.east = new LinkedMazeCell(0, curr);
+      currCell.east.west = currCell;
+      currCell = currCell.east;
+      curr++;
+    }
+  }
+
+  //Create subsequent rows of maze
+  private void createNextRow(LinkedMazeCell baseCell) {
+    int nextRowIndex = baseCell.row + 1;
+    LinkedMazeCell currCellAbove = baseCell;
+    int curr = 1;
+
+    baseCell.south = new LinkedMazeCell(nextRowIndex, 0);
+    baseCell.south.north = baseCell;
+    LinkedMazeCell currCell = baseCell.south;
+
+    while (curr < width) {
+      currCell.east = new LinkedMazeCell(nextRowIndex, curr);
+      currCell.east.west = currCell;
+      currCell.east.north = currCellAbove.east;
+      currCellAbove.east.south = currCell.east;
+
+      currCell = currCell.east;
+      currCellAbove = currCellAbove.east;
+      curr++;
+    }
+  }
+
   @Override
   public int getWidth() {
-    // TODO: Implement me!
-    return 0;
+    return width;
   }
 
   @Override
   public int getHeight() {
-    // TODO: Implement me!
-    return 0;
+    return height;
   }
 
   @Override
   public MazeCell getCell(int row, int col) {
-    // TODO: Implement me!
-    return null;
+    if (row < 0 || col < 0 || row >= height || col >= width) {
+      throw new IndexOutOfBoundsException();
+    }
+
+    LinkedMazeCell cellPointer = topLeft;
+    for (int i = 0; i < row; i++) {
+      cellPointer = cellPointer.south;
+    }
+    for (int i = 0; i < col; i++) {
+      cellPointer = cellPointer.east;
+    }
+    return cellPointer;
   }
 
   @Override
   public boolean isWall(int row, int col) {
-    // TODO: Implement me!
-    return false;
+    if (row < 0 || col < 0 || row >= height || col >= width) {
+      throw new IndexOutOfBoundsException();
+    }
+
+    MazeCell cell = getCell(row, col);
+    return cell.isWall();
   }
 
   @Override
   public void setWall(int row, int col, boolean isWall) {
-    // TODO: Implement me!
+    if (row < 0 || col < 0 || row >= height || col >= width) {
+      throw new IndexOutOfBoundsException();
+    }
+
+    MazeCell cell = getCell(row, col);
+    cell.setWall(isWall);
+    return;
   }
 
   @Override
   public List<MazeCell> getNeighbors(MazeCell cell) {
+    //TODO: Complete this implementation!
     List<MazeCell> neighbors = new ArrayList<>(4);
-    // TODO: Complete this implementation!
     return neighbors;
   }
 
   @Override
   public void resetVisited() {
-    // TODO: Implement me!
+
+    LinkedMazeCell currCellRowBase = topLeft;
+    while (currCellRowBase != null) {
+      LinkedMazeCell currCell = currCellRowBase;
+
+      while (currCell != null) {
+        currCell.setVisited(false);
+        currCell = currCell.east;
+      }
+      currCellRowBase = currCellRowBase.south;
+    }
   }
 }

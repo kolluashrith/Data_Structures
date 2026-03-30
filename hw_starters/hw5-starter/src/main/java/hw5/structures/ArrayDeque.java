@@ -8,6 +8,7 @@ import hw5.exceptions.EmptyException;
  * 
  * @param <T> the type of elements held in this deque
  */
+@SuppressWarnings("unchecked")
 public class ArrayDeque<T> implements Deque<T> {
   // NOTE: Do not remove or rename any of the provided fields.
   private static final int INITIAL_CAPACITY = 8;
@@ -28,12 +29,36 @@ public class ArrayDeque<T> implements Deque<T> {
 
   @Override
   public void addFirst(T element) {
-    // Implement me!
+    if (numElements == elements.length) {
+      grow();
+    }
+    int indexToInsert = (first - 1) % elements.length;
+    elements[indexToInsert] = element;
+    numElements++;
+    first = indexToInsert;
   }
 
   @Override
   public void addLast(T element) {
-    // Implement me!
+    if (numElements == elements.length) {
+      grow();
+    }
+    int indexToInsert = (first + numElements) % elements.length;
+    elements[indexToInsert] = element;
+    numElements++;
+    first = indexToInsert;
+  }
+
+  public void grow() {
+
+    T[] newElements = (T[]) new Object[elements.length * 2];
+
+    for (int i = 0; i < elements.length; i++) {
+      newElements[i] = elements[(first + i) % elements.length];
+    }
+    elements = newElements;
+    first = 0;
+    return;
   }
 
   @Override
