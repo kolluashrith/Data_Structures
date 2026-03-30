@@ -89,6 +89,7 @@ public abstract class MazeTest {
     @Test
     public void testIsWallThrowsIndexOutOfBoundsExceptionForInvalidIndex() {
         try {
+            System.out.println("------testIsWallThrowsIndexOutOfBoundsExceptionForInvalidIndex--------");
             maze.isWall(-1, 0);
             fail("isWall should throw IndexOutOfBoundsException when row is negative.");
         } catch (IndexOutOfBoundsException e) {
@@ -117,6 +118,7 @@ public abstract class MazeTest {
     @Test
     public void testSetWallThrowsIndexOutOfBoundsExceptionForInvalidIndex() {
         try {
+            System.out.println("------testSetWallThrowsIndexOutOfBoundsExceptionForInvalidIndex--------");
             maze.setWall(-1, 0, true);
             fail("setWall should throw IndexOutOfBoundsException when row is negative.");
 
@@ -168,15 +170,15 @@ public abstract class MazeTest {
         List<?> neighborList = maze.getNeighbors(maze.getCell(1, 1));
 
         assertSame(neighborList.get(0), maze.getCell(0, 1)); //North
-        assertSame(neighborList.get(1), maze.getCell(0, 2)); //South
+        assertSame(neighborList.get(1), maze.getCell(2, 1)); //South
         assertSame(neighborList.get(2), maze.getCell(1, 2)); //East
         assertSame(neighborList.get(3), maze.getCell(1, 0)); //West
     }
 
     @Test
     public void testGetNeighborsReturnsListWithOnlyNonWallNeighbors() {
-        maze.setWall(1,0, true);
-        maze.setWall(0,2, true);
+        maze.setWall(1,0, true); //Remove West
+        maze.setWall(2,1, true); //Remove South
         List<?> neighborList = maze.getNeighbors(maze.getCell(1, 1));
 
         assertSame(neighborList.get(0), maze.getCell(0, 1)); //North

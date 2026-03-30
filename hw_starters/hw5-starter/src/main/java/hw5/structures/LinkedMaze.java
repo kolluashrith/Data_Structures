@@ -22,14 +22,18 @@ public class LinkedMaze implements Maze {
     boolean isWall;
     boolean isVisited;
 
+    //An owner field is required to check that the LinkedMazeCell belong to the calling LinkedMaze
+    LinkedMaze owner;
+
     LinkedMazeCell north;
     LinkedMazeCell south;
     LinkedMazeCell east;
     LinkedMazeCell west;
 
-    LinkedMazeCell(int row, int col) {
+    LinkedMazeCell(int row, int col, LinkedMaze owner) {
       this.row = row;
       this.col = col;
+      this.owner = owner;
     }
 
     @Override
@@ -71,13 +75,13 @@ public class LinkedMaze implements Maze {
       throw new IllegalArgumentException();
     }
 
-    this.topLeft = new LinkedMazeCell(0, 0);
+    this.topLeft = new LinkedMazeCell(0, 0, this);
     createRowZero(topLeft);
 
     int currRow = 0;
     LinkedMazeCell currRowBase = topLeft;
 
-    while (currRow < width - 1) {
+    while (currRow < height - 1) {
       createNextRow(currRowBase);
       currRowBase = currRowBase.south;
       currRow++;
@@ -96,7 +100,7 @@ public class LinkedMaze implements Maze {
     int curr = 1;
     LinkedMazeCell currCell = zeroCell;
     while (curr < width) {
-      currCell.east = new LinkedMazeCell(0, curr);
+      currCell.east = new LinkedMazeCell(0, curr, this);
       currCell.east.west = currCell;
       currCell = currCell.east;
       curr++;
@@ -109,12 +113,12 @@ public class LinkedMaze implements Maze {
     LinkedMazeCell currCellAbove = baseCell;
     int curr = 1;
 
-    baseCell.south = new LinkedMazeCell(nextRowIndex, 0);
+    baseCell.south = new LinkedMazeCell(nextRowIndex, 0, this);
     baseCell.south.north = baseCell;
     LinkedMazeCell currCell = baseCell.south;
 
     while (curr < width) {
-      currCell.east = new LinkedMazeCell(nextRowIndex, curr);
+      currCell.east = new LinkedMazeCell(nextRowIndex, curr, this);
       currCell.east.west = currCell;
       currCell.east.north = currCellAbove.east;
       currCellAbove.east.south = currCell.east;
@@ -174,9 +178,39 @@ public class LinkedMaze implements Maze {
 
   @Override
   public List<MazeCell> getNeighbors(MazeCell cell) {
-    //TODO: Complete this implementation!
+
+    //Need to cast to get access to the neighboring cell fields
+    LinkedMazeCell linkedCell;
+    if (cell instanceof LinkedMazeCell) {
+      linkedCell = (LinkedMazeCell) cell;
+    } else {
+      throw new IllegalArgumentException();
+    }
+
+    //Check to make sure the argument belongs to the calling object
+    if (linkedCell.owner != this) {
+      throw new IllegalArgumentException();
+    }
+
     List<MazeCell> neighbors = new ArrayList<>(4);
+    addNeighbors(linkedCell, neighbors);
+
     return neighbors;
+  }
+
+  private void addNeighbors(LinkedMazeCell linkedCell, List<MazeCell> neighbors) {
+    if (linkedCell.north != null && !linkedCell.north.isWall()) {
+      neighbors.add(linkedCell.north);
+    }
+    if (linkedCell.south != null && !linkedCell.south.isWall()) {
+      neighbors.add(linkedCell.south);
+    }
+    if (linkedCell.east != null && !linkedCell.east.isWall()) {
+      neighbors.add(linkedCell.east);
+    }
+    if (linkedCell.west != null && !linkedCell.west.isWall()) {
+      neighbors.add(linkedCell.west);
+    }
   }
 
   @Override
