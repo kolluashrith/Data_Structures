@@ -229,9 +229,4 @@ public abstract class MazeTest {
         }
     }
 
-
-
-    // TODO: Add more tests
-    //Might need some for reset
-
 }

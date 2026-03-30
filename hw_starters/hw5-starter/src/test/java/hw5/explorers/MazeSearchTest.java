@@ -56,4 +56,94 @@ public abstract class MazeSearchTest {
 
         assertTrue(path.isEmpty(), "Should not find a path to a completely blocked cell.");
     }
+
+    @Test
+    public void MazeTestWithLongAndShortPath() {
+        System.out.println("\nTesting: MazeTestWithLongAndShortPath");
+        maze.setWall(1, 1, true);
+        maze.setWall(1, 2, true);
+        maze.setWall(1, 3, true);
+        maze.setWall(2, 3, true);
+        maze.setWall(3, 3, true);
+        maze.setWall(4, 0, true);
+        maze.setWall(4, 1, true);
+        MazeCell start = maze.getCell(3, 0);
+        MazeCell goal = maze.getCell(1, 0);
+
+        /* This is the maze that is set up.
+         *          ooooo
+         *  end     oxxxo
+         *          oxoxo
+         * start    oooxo
+         *          xxooo
+         */
+
+        LinkedMaze castMaze = (LinkedMaze) maze;
+        List<MazeCell> path = searcher.findPath(start, goal);
+        String type = (searcher instanceof StackBasedMazeSearch) ? "StackBasedMazeSearch" : "QueueBasedMazeSearch";
+        System.out.println("------ Current Search Type: " + type + "-------");
+        System.out.println("Path size: " + path.size());
+        System.out.println("Cells visited: " + castMaze.countVisited());
+
+    }
+
+    @Test
+    public void MazeTestWithIntersectingPaths() {
+        System.out.println("\nTesting: MazeTestWithIntersectingPaths");
+        maze.setWall(0, 2, true);
+        maze.setWall(2, 0, true);
+        maze.setWall(2, 1, true);
+        maze.setWall(2, 3, true);
+        maze.setWall(3, 3, true);
+        maze.setWall(4, 0, true);
+        maze.setWall(4, 1, true);
+        MazeCell start = maze.getCell(3, 0);
+        MazeCell goal = maze.getCell(1, 0);
+
+        /* This is the maze that is set up.
+         *          ooxoo
+         * end      ooooo
+         *          xxoxo
+         * start    oooxo
+         *          xxooo
+         */
+
+        LinkedMaze castMaze = (LinkedMaze) maze;
+        List<MazeCell> path = searcher.findPath(start, goal);
+        String type = (searcher instanceof StackBasedMazeSearch) ? "StackBasedMazeSearch" : "QueueBasedMazeSearch";
+        System.out.println("------ Current Search Type: " + type + "-------");
+        System.out.println("Path size: " + path.size());
+        System.out.println("Cells visited: " + castMaze.countVisited());
+
+    }
+
+    @Test
+    public void MazeTestWithStartEndOppositeCorners() {
+        System.out.println("\nTesting: MazeTestWithStartEndOppositeCorners");
+        maze.setWall(0, 2, true);
+        maze.setWall(2, 0, true);
+        maze.setWall(2, 1, true);
+        maze.setWall(2, 3, true);
+        maze.setWall(3, 3, true);
+        maze.setWall(4, 0, true);
+        maze.setWall(4, 1, true);
+        MazeCell start = maze.getCell(0, 0);
+        MazeCell goal = maze.getCell(4, 4);
+
+        /* This is the maze that is set up.
+         *   start  ooxoo
+         *          ooooo
+         *          xxoxo
+         *          oooxo
+         *          xxooo end
+         */
+
+        LinkedMaze castMaze = (LinkedMaze) maze;
+        List<MazeCell> path = searcher.findPath(start, goal);
+        String type = (searcher instanceof StackBasedMazeSearch) ? "StackBasedMazeSearch" : "QueueBasedMazeSearch";
+        System.out.println("------ Current Search Type: " + type + "-------");
+        System.out.println("Path size: " + path.size());
+        System.out.println("Cells visited: " + castMaze.countVisited());
+
+    }
 }

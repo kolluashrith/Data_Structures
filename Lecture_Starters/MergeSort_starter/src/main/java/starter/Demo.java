@@ -35,7 +35,31 @@ public class Demo {
   //  3) arr[mid] ... arr[right-1] is sorted
   // Post: arr[left] ... arr[right-1] is sorted.
   private static void merge(int[] arr, int left, int mid, int right) {
-    // TODO Implement me!
+
+    if (arr[mid - 1] > arr[mid]) { //Escape early if already sorted
+      int[] temp = new int[right - left]; //Total number of components in range
+      int cursor = 0;
+      int i = left;
+      int j = mid;
+
+      //Run as long as elements remain in both parts of array
+      while (i < mid && j < right) {
+        temp[cursor++] = arr[i] <= arr[j] ? arr[i++] : arr[j++];
+      }
+
+      //Left previous loop because either left side or right side ran out. Now finish remaining array.
+      while (i < mid) {
+        temp[cursor++] = arr[i++];
+      }
+      while (j < right) {
+        temp[cursor++] = arr[j++];
+      }
+
+      //Copy back everything from temp to arr
+      for (int k = 0; k < temp.length; k++) {
+        arr[left + k] = temp[k];
+      }
+    }
   }
 
   /**

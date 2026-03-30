@@ -227,4 +227,25 @@ public class LinkedMaze implements Maze {
       currCellRowBase = currCellRowBase.south;
     }
   }
+
+  /**
+   * Function to count the number of cells that were visited in a search. Used for testing.
+   * @return int representing the number of visited cells
+   */
+  public int countVisited() {
+    int count = 0;
+    LinkedMazeCell currCellRowBase = topLeft;
+    while (currCellRowBase != null) {
+      LinkedMazeCell currCell = currCellRowBase;
+
+      while (currCell != null) {
+        if (currCell.isVisited()) {
+          count++;
+        }
+        currCell = currCell.east;
+      }
+      currCellRowBase = currCellRowBase.south;
+    }
+    return count;
+  }
 }
