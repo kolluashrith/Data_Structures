@@ -32,7 +32,7 @@ public class ArrayDeque<T> implements Deque<T> {
     if (numElements == elements.length) {
       grow();
     }
-    int indexToInsert = (first - 1) % elements.length;
+    int indexToInsert = (first - 1 + elements.length) % elements.length; //Add elements.length to ensure positive
     elements[indexToInsert] = element;
     numElements++;
     first = indexToInsert;
@@ -46,10 +46,9 @@ public class ArrayDeque<T> implements Deque<T> {
     int indexToInsert = (first + numElements) % elements.length;
     elements[indexToInsert] = element;
     numElements++;
-    first = indexToInsert;
   }
 
-  public void grow() {
+  private void grow() {
 
     T[] newElements = (T[]) new Object[elements.length * 2];
 
@@ -58,42 +57,62 @@ public class ArrayDeque<T> implements Deque<T> {
     }
     elements = newElements;
     first = 0;
-    return;
+
   }
 
   @Override
   public T removeFirst() {
-    // Implement me!
-    return null;
+    if (isEmpty()) {
+      throw new EmptyException();
+    }
+
+
+    numElements--; //Had to move this up here to get around checkstyle issue, but does not affect logic
+    T elementRemoved = elements[first];
+
+    elements[first] = null;
+    first = (first + 1) % elements.length;
+
+    return elementRemoved;
   }
 
   @Override
   public T removeLast() {
-    // Implement me!
-    return null;
+    if (isEmpty()) {
+      throw new EmptyException();
+    }
+    T elementRemoved = elements[(first + numElements - 1)  % elements.length];
+
+    elements[(first + numElements - 1)  % elements.length] = null;
+
+    numElements--;
+
+    return elementRemoved;
   }
 
   @Override
   public T peekFirst() {
-    // Implement me!
-    return null;
+    if (isEmpty()) {
+      throw new EmptyException();
+    }
+    return elements[first];
   }
 
   @Override
   public T peekLast() {
-    // Implement me!
-    return null;
+    if (isEmpty()) {
+      throw new EmptyException();
+    }
+    return elements[(first + numElements - 1)  % elements.length];
   }
 
   @Override
   public int size() {
-    // Implement me!
-    return 0;
+    return numElements;
   }
 
   @Override
   public boolean isEmpty() {
-    // Implement me!
-    return false;
+    return numElements == 0;
   }
 }
