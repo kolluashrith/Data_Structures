@@ -186,6 +186,15 @@ public abstract class MazeTest {
     }
 
     @Test
+    public void testGetNeighborsReturnsEmptyListWithOnlyWallNeighbors() {
+        maze.setWall(1,0, true); //Remove East
+        maze.setWall(0,1, true); //Remove South
+        List<?> neighborList = maze.getNeighbors(maze.getCell(0, 0));
+
+        assertTrue(neighborList.isEmpty());
+    }
+
+    @Test
     public void testGetNeighborsReturnsOnlyTwoNeighborsInTopLeftCorner() {
         List<?> neighborList = maze.getNeighbors(maze.getCell(0, 0));
 
