@@ -17,7 +17,16 @@ public class Demo {
   // Post: arr[left] ... arr[right-12] is sorted.
   private static void quicksort(int[] arr, int left, int right) {
 
-    // TODO Implement me!
+    int n = right - left; //number of elements to sort
+
+    if (n < 2) { //Base case
+      return;
+    } else {
+      int p = partition(arr, left, right);
+      quicksort(arr, left, p);
+      quicksort(arr, p + 1, right); //Pivot is already in sorted location, so we don't have to include again
+    }
+
   }
 
   // Partition by taking the right-most element as pivot.
@@ -25,8 +34,22 @@ public class Demo {
   // Post: a[left] <= .. <= pivot <= .. <= a[right - 1]
   // Returns: index of pivot element in array.
   private static int partition(int[] arr, int left, int right) {
-    // TODO Implement me!
-    return 0;
+    int p = right - 1; //Pivot index
+    int i = left; //left marker index
+    int j = p - 1; //right marker index
+
+    while (i <= j) {
+      if (arr[i] <= arr[p]) {
+        i++;
+      } else if (arr[j] > arr[p]) {
+        j--;
+      } else {
+        //Now we have both markers at a position where they need to be swapped.
+        swap(arr, i, j);
+      }
+    }
+    swap(arr, i, p);
+    return i;
   }
 
   // Swap arr[i] with arr[j]
