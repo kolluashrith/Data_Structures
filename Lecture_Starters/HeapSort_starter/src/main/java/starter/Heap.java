@@ -31,12 +31,34 @@ public class Heap {
 
   // Pre: data != null
   private static void sort(Integer[] data) {
+
+    //O(n) operation because n memory locations need to be allocated and initialized to null (internal array)
     PriorityQueue<Integer> heap = new PriorityQueue<>(data.length);
-    for (Integer i : data) {
-      heap.add(i);
+
+    for (Integer i : data) { //Loops n times
+      heap.add(i); //Addition is a O(lg n) operation
     }
-    for (int i = 0; i < data.length; i++) {
-      data[i] = heap.remove();
+    //Whole loop is O(n lg n)
+
+    for (int i = 0; i < data.length; i++) { //Loops n times
+      data[i] = heap.remove(); //O(lg n) to remove, replace top with last element and swim down
     }
+    //Whole loop is O(n lg n)
+
+    //TOTAL TIME: O(n) + O(n lg n) + O(n lg n) = O(n lg n)
+    //Space: O(n) to hold helper priority queue
+
+    /*
+    Heapify optimization: Traverse heap bottom up to get asymptotic runtime of O(n)
+
+    //Scheme:
+    for (int i = numElements/2, i >= 1, i--) { //We can do numElements/2 to avoid all non-leaves
+      sort (i, data)
+    }
+
+
+
+
+     */
   }
 }
