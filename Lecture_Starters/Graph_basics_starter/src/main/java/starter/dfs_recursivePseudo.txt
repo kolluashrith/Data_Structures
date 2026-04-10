@@ -1,0 +1,10 @@
+dfs(graph, s):
+    explored = {s}
+    dfs(graph, s, explored)
+    return explored
+
+dfs(graph, s, explored):
+    for every outgoing edge (s, t):
+        if t not in explored:
+            explored.insert(t)
+            dfs(graph, t, explored)
