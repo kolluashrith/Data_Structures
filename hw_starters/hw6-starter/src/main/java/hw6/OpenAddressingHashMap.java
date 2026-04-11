@@ -1,5 +1,6 @@
 package hw6;
 
+import javax.naming.SizeLimitExceededException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -7,13 +8,15 @@ import java.util.NoSuchElementException;
 
 public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
-  private static final int DEFAULT_INITIAL_CAPACITY = 16;
+  private static final int DEFAULT_INITIAL_CAPACITY = 5;
   private static final double DEFAULT_LOAD_FACTOR = 0.75;
+  private static final int[] PRIMES = {5, 11, 23, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717, 51437, 102877, 205759, 411527, 823117, 1646249, 3292507};
+
 
   private DataWrapper<K, V>[] data;
   private int numElements;
   private int numTombstones;
-
+  private int currentPrimeIndex;
   /**
    * Constructor for the OpenAddressingHashMap.
    */
@@ -21,7 +24,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
     data = (DataWrapper<K, V>[]) new DataWrapper[DEFAULT_INITIAL_CAPACITY];
     numElements = 0;
-
+    currentPrimeIndex = 0;
   }
 
   @Override
@@ -30,35 +33,47 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
       throw new IllegalArgumentException("Key cannot be null");
     }
 
-    int hash = k.hashCode();
-    int toInsert =  hash % data.length;
-
-    //Probe
-    while (data[toInsert] != null) {
-      if (data[toInsert].key == k) {
-        throw new IllegalArgumentException("Key is already in the map");
-      } else {
-        //Linear probing implementation
-        toInsert = (toInsert + 1) % data.length;
-      }
-    }
-
-    //Found empty space
+    //Find empty space
+    int toInsert = toInsert(k);
     data[toInsert] = new DataWrapper<>(k, v);
     numElements++;
 
     //At this point, we are sure that our key is not already present in the map
     //We can proceed with checking size and growing if needed
 
-    if ((numElements + numTombstones + 1.00) / data.length >= DEFAULT_LOAD_FACTOR) {
+    if (((float) numElements + numTombstones) / data.length >= DEFAULT_LOAD_FACTOR) {
       grow();
     }
+  }
+
+  private int toInsert(K k) throws IllegalArgumentException {
+    int hash = k.hashCode();
+    int toInsert =  hash % data.length;
+
+    // The line below is only required for quadratic probing.
+    // int numProbeMovements = 0;
+
+    //Collision Probe
+    while (data[toInsert] != null) {
+      if (data[toInsert].key == k) {
+        throw new IllegalArgumentException("Key is already in the map");
+      } else {
+        //Linear probing implementation
+        toInsert = (toInsert + 1) % data.length;
+
+        //Quadratic probing implementation; uncomment line 36 when using this as well
+        //toInsert = (toInsert + numProbeMovements * numProbeMovements) & data.length;
+      }
+    }
+
+    //If here, we found an empty space. Return index.
+    return toInsert;
   }
 
   //Helper method to grow the data array when the number of elements and tombstones exceeds load
   //factor. Clear all tombstones in the process.
   private void grow() {
-    data = (DataWrapper<K, V>[]) new DataWrapper[data.length * 2];
+    data = (DataWrapper<K, V>[]) new DataWrapper[PRIMES[++currentPrimeIndex]];
     numTombstones = 0;
 
     for (DataWrapper<K, V> dataElement : data) {
@@ -80,6 +95,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
       throw new  IllegalArgumentException("Key not found");
     }
 
+    numTombstones++;
     V toReturn = data[locationAt].value;
     data[locationAt] = new DataWrapper<>(true);
     numElements--;
