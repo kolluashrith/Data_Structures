@@ -1,6 +1,5 @@
 package hw6;
 
-import javax.naming.SizeLimitExceededException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -8,23 +7,25 @@ import java.util.NoSuchElementException;
 
 public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
-  private static final int DEFAULT_INITIAL_CAPACITY = 5;
   private static final double DEFAULT_LOAD_FACTOR = 0.75;
-  private static final int[] PRIMES = {5, 11, 23, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717, 51437, 102877, 205759, 411527, 823117, 1646249, 3292507};
-
+  private static final int[] PRIMES = {5, 11, 23, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717, 51437, 102877,
+                                       205759, 411527, 823117, 1646249, 3292507};
+  private static final DataWrapper<?, ?> TOMBSTONE = new DataWrapper<>(null, null);
 
   private DataWrapper<K, V>[] data;
   private int numElements;
   private int numTombstones;
   private int currentPrimeIndex;
+
   /**
    * Constructor for the OpenAddressingHashMap.
    */
   public OpenAddressingHashMap() {
 
-    data = (DataWrapper<K, V>[]) new DataWrapper[DEFAULT_INITIAL_CAPACITY];
-    numElements = 0;
     currentPrimeIndex = 0;
+    data = (DataWrapper<K, V>[]) new DataWrapper[PRIMES[currentPrimeIndex]];
+    numElements = 0;
+
   }
 
   @Override
@@ -46,6 +47,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
     }
   }
 
+  //Helper method to return the index at which there is empty space to insert the new key-value pair.
   private int toInsert(K k) throws IllegalArgumentException {
     int hash = k.hashCode();
     int toInsert =  hash % data.length;
@@ -55,14 +57,15 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
     //Collision Probe
     while (data[toInsert] != null) {
-      if (data[toInsert].key == k) {
-        throw new IllegalArgumentException("Key is already in the map");
-      } else {
+      if (data[toInsert] == TOMBSTONE || !data[toInsert].key.equals(k)) {
         //Linear probing implementation
         toInsert = (toInsert + 1) % data.length;
 
         //Quadratic probing implementation; uncomment line 36 when using this as well
         //toInsert = (toInsert + numProbeMovements * numProbeMovements) & data.length;
+
+      } else { //implies data[toInsert].key.equals(k) is true
+        throw new IllegalArgumentException("Key is already in the map");
       }
     }
 
@@ -73,11 +76,15 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
   //Helper method to grow the data array when the number of elements and tombstones exceeds load
   //factor. Clear all tombstones in the process.
   private void grow() {
-    data = (DataWrapper<K, V>[]) new DataWrapper[PRIMES[++currentPrimeIndex]];
-    numTombstones = 0;
 
-    for (DataWrapper<K, V> dataElement : data) {
-      if (dataElement != null && !dataElement.tombstone) {
+    numTombstones = 0;
+    numElements = 0;
+
+    DataWrapper<K, V>[] oldData = data;
+    data = (DataWrapper<K, V>[]) new DataWrapper[PRIMES[++currentPrimeIndex]];
+
+    for (DataWrapper<K, V> dataElement : oldData) {
+      if (dataElement != null && dataElement != TOMBSTONE) {
         insert(dataElement.key, dataElement.value);
       }
     }
@@ -97,7 +104,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
     numTombstones++;
     V toReturn = data[locationAt].value;
-    data[locationAt] = new DataWrapper<>(true);
+    data[locationAt] = (DataWrapper<K, V>) TOMBSTONE;
     numElements--;
 
     return toReturn;
@@ -106,9 +113,9 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
   //Returns the index in the array where the key is, if it exists. If not, returns -1.
   private int find(K k) {
     int hash = k.hashCode();
-    int locationAt =  hash % data.length;
+    int locationAt = hash % data.length;
     while (data[locationAt] != null) {
-      if (data[locationAt].key == k) {
+      if (data[locationAt] != TOMBSTONE && data[locationAt].key.equals(k)) {
         return locationAt;
       } else {
         locationAt = (locationAt + 1) % data.length;
@@ -134,7 +141,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
   @Override
   public V get(K k) throws IllegalArgumentException {
-    if (k == null || !has(k)) {
+    if (k == null) {
       throw new IllegalArgumentException("Key cannot be null");
     }
 
@@ -171,18 +178,10 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
   private static class DataWrapper<K, V> {
     K key;
     V value;
-    boolean tombstone;
 
     DataWrapper(K key, V value) {
       this.key = key;
       this.value = value;
-      tombstone = false;
-    }
-
-    DataWrapper(boolean tombstone) {
-      key = null;
-      value = null;
-      this.tombstone = tombstone;
     }
   }
 
@@ -194,7 +193,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
       cursor = 0;
 
       //Start cursor at first element
-      while (cursor < data.length && (data[cursor] == null || data[cursor].tombstone)) {
+      while (cursor < data.length && (data[cursor] == null || data[cursor] ==  TOMBSTONE)) {
         cursor++;
       }
     }
@@ -214,7 +213,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
       do {
         cursor++;
-      } while (cursor < data.length && (data[cursor] == null || data[cursor].tombstone));
+      } while (cursor < data.length && (data[cursor] == null || data[cursor] == TOMBSTONE));
 
       return returnPair.key;
     }
