@@ -3,6 +3,9 @@ package hw6;
 import java.util.Iterator;
 
 public class ChainingHashMap<K, V> implements Map<K, V> {
+
+
+
   @Override
   public void insert(K k, V v) throws IllegalArgumentException {
     // TODO Implement Me!
