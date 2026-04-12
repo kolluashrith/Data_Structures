@@ -32,7 +32,7 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
   }
 
   /**
-   * Overloaded constructor for OpenAddressingHashMap allowing for the modification of the load factor
+   * Overloaded constructor for OpenAddressingHashMap allowing for the modification of the load factor.
    * @param loadFactor double corresponding load factor to use
    */
   public OpenAddressingHashMap(double loadFactor) {
@@ -174,6 +174,9 @@ public class OpenAddressingHashMap<K, V> implements Map<K, V> {
 
   @Override
   public boolean has(K k) {
+    if (k == null) {
+      return false;
+    }
 
     int locationAt = find(k);
 

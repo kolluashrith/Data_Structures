@@ -27,7 +27,7 @@ public class ChainingHashMap<K, V> implements Map<K, V> {
   }
 
   /**
-   * Overloaded constructor for ChainingHashMap allowing for the modification of the load factor
+   * Overloaded constructor for ChainingHashMap allowing for the modification of the load factor.
    * @param loadFactor double corresponding load factor to use
    */
   public ChainingHashMap(double loadFactor) {
@@ -148,6 +148,10 @@ public class ChainingHashMap<K, V> implements Map<K, V> {
 
   @Override
   public boolean has(K k) {
+    if (k == null) {
+      return false;
+    }
+
     Pair<Integer, Integer> findKeyResult = findKey(k);
 
     return findKeyResult.value != null;
