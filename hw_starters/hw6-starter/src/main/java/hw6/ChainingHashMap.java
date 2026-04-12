@@ -14,6 +14,7 @@ public class ChainingHashMap<K, V> implements Map<K, V> {
   private ArrayList<Pair<K, V>>[] pairListList;
   private int numElements;
   private int currentPrimeIndex;
+  private final double loadFactor;
 
   /**
    * Constructor for ChainingHashMap.
@@ -22,6 +23,18 @@ public class ChainingHashMap<K, V> implements Map<K, V> {
     currentPrimeIndex = 0;
     pairListList = (ArrayList<Pair<K, V>>[]) new ArrayList[PRIMES[currentPrimeIndex]];
     numElements = 0;
+    loadFactor = DEFAULT_LOAD_FACTOR;
+  }
+
+  /**
+   * Overloaded constructor for ChainingHashMap allowing for the modification of the load factor
+   * @param loadFactor double corresponding load factor to use
+   */
+  public ChainingHashMap(double loadFactor) {
+    currentPrimeIndex = 0;
+    pairListList = (ArrayList<Pair<K, V>>[]) new ArrayList[PRIMES[currentPrimeIndex]];
+    numElements = 0;
+    this.loadFactor = loadFactor;
   }
 
   @Override
@@ -31,7 +44,7 @@ public class ChainingHashMap<K, V> implements Map<K, V> {
     }
 
     //This repeated code (from findKey) is required to find the index to initialize the ArrayList if needed
-    int hash = k.hashCode();
+    int hash = Math.abs(k.hashCode());
     int pairListToInsert =  hash % pairListList.length;
 
     //Collision Probe
@@ -47,7 +60,7 @@ public class ChainingHashMap<K, V> implements Map<K, V> {
     pairListList[pairListToInsert].add(pairToAdd);
     numElements++;
 
-    if (((float) numElements / pairListList.length) > DEFAULT_LOAD_FACTOR) {
+    if (((float) numElements / pairListList.length) > loadFactor) {
       grow();
     }
   }
@@ -62,7 +75,7 @@ public class ChainingHashMap<K, V> implements Map<K, V> {
   //Helper method to find a key in the hash table, if it exists. Returns a pair with the first integer corresponding
   //to the array position and the second integer corresponding to the ArrayList position of the key.
   private Pair<Integer, Integer> findKey(K k) {
-    int hash = k.hashCode();
+    int hash = Math.abs(k.hashCode());
     int pairListToInsert =  hash % pairListList.length;
 
     if (pairListList[pairListToInsert] == null) {
