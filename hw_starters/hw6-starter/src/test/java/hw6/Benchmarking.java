@@ -12,7 +12,7 @@ public class Benchmarking {
     public static boolean VERBOSE = true;
 
     // Update this to any other data file for benchmarking experiments.  `src/test/resources` contains other files; you can provide your own if you'd like
-    public static String DATA_FILE = "random164.txt";
+    public static String DATA_FILE = "apache.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
 
