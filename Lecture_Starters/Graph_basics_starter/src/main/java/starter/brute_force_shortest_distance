@@ -1,0 +1,24 @@
+Brute force shortest distance
+
+G is graph
+
+shortestDistance(G, source, target):
+    path = {} //list (preserves order) with set operations for add and remove
+    return shortestDistance(G, source, target, 0, path)
+
+//Helper function
+shortestDistance(G, source, target, priorDist, path):
+    if source == target:
+        return priorDist //could also return path
+    else:
+
+        for every outgoing edge (source, neighbor) with distance d:
+            if neighbor not in path
+                add neighbor to path //dropping a breadcrumb
+                distance = shortestDist(G, neighbor, target, priorDist + d, path)
+                remove neighbor from path //pick up breadcrumb
+                if distance < shortest:
+                    shortest = distance
+
+
+This brute force method is O(d^n) for sparse case (where every vertex has a max of d edges) and O(n!) for dense case
