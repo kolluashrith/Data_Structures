@@ -26,35 +26,14 @@ public class DijkstraStreetSearcher extends StreetSearcher {
       return;
     }
 
-    double totalDist = -1;  // totalDist must be update below
-
-    PriorityQueue<VertexWrapper> pq = new PriorityQueue<>(new CompareVertices(graph));
+    PriorityQueue<VertexWrapper> pq = new PriorityQueue<>(new CompareVertices());
 
     //Map stored as <Edge, Previous Edge>
     HashMap<Vertex<String>, Vertex<String>> prevMap = new HashMap<>();
 
-    //Seeds pq with starting vertex
-    pq.add(new VertexWrapper(SV, (Double) 0.0, null, null));
-    graph.label(SV, null);
-
-    while (!prevMap.containsKey(EV) && !pq.isEmpty()) {
-      VertexWrapper curr = pq.remove();
-
-      //Prevent updating values if a shorter path was already found
-      if (prevMap.containsKey(curr.vertex)) {
-        continue;
-      }
-
-      //If removed, this is the shortest distance to the unexplored vertex
-      prevMap.put(curr.vertex, curr.prevVertex);
-      graph.label(curr.vertex, curr.road);
-      totalDist = curr.distance;
-
-      for (Edge<String> edge : graph.outgoing(curr.vertex)) {
-        Vertex<String> nextVertex = graph.to(edge);
-        pq.add(new VertexWrapper(nextVertex, curr.distance + (Double) graph.label(edge), curr.vertex, edge));
-      }
-    }
+    //Call helper method to do the algorithm; the distance returned by it will be the shortest distance if path exists
+    //Otherwise, we need to overwrite it.
+    double totalDist = dijkstraAlgo(SV, EV, pq, prevMap);
 
     if (!prevMap.containsKey(EV)) {
       totalDist = -1;
@@ -85,26 +64,36 @@ public class DijkstraStreetSearcher extends StreetSearcher {
   //Helper method to actually run the algorithm
   private double dijkstraAlgo(Vertex<String> startVertex, Vertex<String> endVertex, PriorityQueue<VertexWrapper> pq,
                               HashMap<Vertex<String>, Vertex<String>> prevMap) {
-    double toReturn = -1;
+    double totalDist = -1;
 
+    //Seeds pq with starting vertex
+    pq.add(new VertexWrapper(startVertex, (Double) 0.0, null, null));
+    graph.label(startVertex, null);
 
+    while (!prevMap.containsKey(endVertex) && !pq.isEmpty()) {
+      VertexWrapper curr = pq.remove();
 
+      //Prevent updating values if a shorter path was already found
+      if (prevMap.containsKey(curr.vertex)) {
+        continue;
+      }
 
+      //If removed, this is the shortest distance to the unexplored vertex
+      prevMap.put(curr.vertex, curr.prevVertex);
+      graph.label(curr.vertex, curr.road);
+      totalDist = curr.distance;
 
+      for (Edge<String> edge : graph.outgoing(curr.vertex)) {
+        Vertex<String> nextVertex = graph.to(edge);
+        pq.add(new VertexWrapper(nextVertex, curr.distance + (Double) graph.label(edge), curr.vertex, edge));
+      }
+    }
 
-
-
-
-    return toReturn;
+    return totalDist;
   }
 
   //Comparator class to change ordering of edges to follow the distances on the labels
   private static class CompareVertices implements Comparator<VertexWrapper> {
-    private final Graph<String, String> graph;
-
-    CompareVertices(Graph<String, String> graph) {
-      this.graph = graph;
-    }
 
     @Override
     public int compare(VertexWrapper o1, VertexWrapper o2) {
