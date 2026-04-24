@@ -602,5 +602,277 @@ public abstract class GraphTest {
 
   //Need Tests for from/to and down
 
-  // TODO add more tests here.
+  @Test
+  @DisplayName("from() returns source vertex of edge")
+  public void fromReturnsSourceVertex() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Edge<String> e = graph.insert(v1, v2, "v1-v2");
+
+    //This only works because the inner class had a equals() method defined; it checks both data and owner
+    assertEquals(v1, graph.from(e));
+  }
+
+  @Test
+  @DisplayName("to(e) returns the destination vertex of an edge")
+  public void toReturnsDestinationVertex() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Edge<String> e = graph.insert(v1, v2, "v1-v2");
+
+    //This only works because the inner class had a equals() method defined; it checks both data and owner
+    assertEquals(v2, graph.to(e));
+  }
+
+  @Test
+  @DisplayName("from() throws PositionException with null input")
+  public void fromThrowsPositionExceptionWithNullInput() {
+    try {
+      graph.from(null);
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("from() throws PositionException with removed edge input")
+  public void fromRemovedEdgeThrowsPositionException() {
+    try {
+      Vertex<String> v1 = graph.insert("v1");
+      Vertex<String> v2 = graph.insert("v2");
+      Edge<String> e = graph.insert(v1, v2, "v1-v2");
+      graph.remove(e);
+      graph.from(e);
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("to() throws PositionException with null input")
+  public void toThrowsPositionExceptionWithNullInput() {
+    try {
+      graph.to(null);
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("to() throws PositionException for removed edge input")
+  public void toRemovedEdgeThrowsPositionException() {
+    try {
+      Vertex<String> v1 = graph.insert("v1");
+      Vertex<String> v2 = graph.insert("v2");
+      Edge<String> e = graph.insert(v1, v2, "v1-v2");
+      graph.remove(e);
+      graph.to(e);
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() correctly sets and gets vertex label")
+  public void labelSetsAndGetsVertexLabel() {
+    Vertex<String> v1 = graph.insert("v1");
+    graph.label(v1, "labeled");
+    assertEquals("labeled", graph.label(v1));
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException for null vertex when setting label")
+  public void labelThrowsPositionExceptionWhenSettingToNullVertex() {
+    try {
+      graph.insert("v1");
+      //Cast to test vertex labeling specifically
+      graph.label((Vertex<String>) null, "labeled");
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException for labeling a removed vertex")
+  public void labelingARemovedVertexThrowsPositionException() {
+    try {
+      Vertex<String> v1 = graph.insert("v1");
+      Vertex<String> v2 = graph.insert("v2");
+      graph.remove(v1);
+
+      graph.label(v1, "removed");
+
+      fail("PositionException should have been thrown");
+    }  catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() correctly sets and gets edge label")
+  public void labelSetsAndGetsEdgeLabel() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Edge<String> e = graph.insert(v1, v2, "v1-v2");
+    graph.label(e, "labeled");
+    assertEquals("labeled", graph.label(e));
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException for null edge when setting label")
+  public void labelThrowsPositionExceptionWhenSettingToNullEdge() {
+    try {
+      graph.insert("v1");
+      graph.label((Edge<String>) null, "labeled");
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException for labeling a removed edge")
+  public void labelingARemovedEdgeThrowsPositionException() {
+    try {
+      Vertex<String> v1 = graph.insert("v1");
+      Vertex<String> v2 = graph.insert("v2");
+      Edge<String> e = graph.insert(v1, v2, "v1-v2");
+
+      graph.remove(e);
+
+      graph.label(e, "removed");
+
+      fail("PositionException should have been thrown");
+    }  catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() returns null when querying a vertex with no label set")
+  public void labelReturnsNullWhenNoVertexLabelIsSet() {
+    Vertex<String> v = graph.insert("v");
+    assertNull(graph.label(v));
+  }
+
+  @Test
+  @DisplayName("label() returns null when querying a vertex with no label set")
+  public void labelReturnsNullWhenNoEdgeLabelIsSet() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Edge<String> e = graph.insert(v1, v2, "v1-v2");
+
+    assertNull(graph.label(e));
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException when querying null vertex")
+  public void labelThrowsPositionExceptionQueryingNullVertex() {
+    try {
+      graph.label((Vertex<String>) null);
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException when querying null edge")
+  public void labelThrowsPositionExceptionQueryingNullEdge() {
+    try {
+      graph.label((Edge<String>) null);
+      fail("PositionException should have been thrown");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException for querying a removed vertex")
+  public void labelThrowsPositionExceptionWhenQueryingARemovedVertex() {
+    try {
+      Vertex<String> v1 = graph.insert("v1");
+      Vertex<String> v2 = graph.insert("v2");
+      graph.label(v1, "removed");
+
+      graph.remove(v1);
+
+      graph.label(v1);
+      fail("PositionException should have been thrown");
+    }  catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("label() throws PositionException for querying a removed edge")
+  public void labelThrowsPositionExceptionWhenQueryingARemovedEdge() {
+    try {
+      Vertex<String> v1 = graph.insert("v1");
+      Vertex<String> v2 = graph.insert("v2");
+      Edge<String> e = graph.insert(v1, v2, "v1-v2");
+      graph.label(e, "removed");
+
+      graph.remove(e);
+
+      graph.label(e);
+      fail("PositionException should have been thrown");
+    }  catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("clearLabels() resets all vertex labels")
+  public void clearResetsVertexLabels() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    graph.label(v1, "labeled1");
+    graph.label(v2, "labeled2");
+    graph.clearLabels();
+    assertNull(graph.label(v1));
+    assertNull(graph.label(v2));
+  }
+
+  @Test
+  @DisplayName("clearLabels() resets all edge labels")
+  public void clearResetsEdgeLabels() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Edge<String> e1 = graph.insert(v1, v2, "e1");
+    Edge<String> e2 = graph.insert(v2, v1, "e2");
+    graph.label(e1, "labeled1");
+    graph.label(e2, "labeled2");
+    graph.clearLabels();
+    assertNull(graph.label(e1));
+    assertNull(graph.label(e2));
+  }
+
+  @Test
+  @DisplayName("clearLabels() on empty graph does not result in errors")
+  public void clearHandlesEmptyGraph() {
+    graph.clearLabels();
+  }
+
+  @Test
+  @DisplayName("labels can be set after clearing")
+  public void clearDoesNotBreakLabelingFunctionality() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Edge<String> e = graph.insert(v1, v2, "v1-v2");
+
+    graph.label(v1, "labeledVertex");
+    graph.label(e, "labeledEdge");
+    graph.clearLabels();
+    graph.label(v1, "labeledVertex2");
+    graph.label(e, "labeledEdge2");
+
+    assertEquals("labeledVertex2", graph.label(v1));
+    assertEquals("labeledEdge2", graph.label(e));
+  }
 }

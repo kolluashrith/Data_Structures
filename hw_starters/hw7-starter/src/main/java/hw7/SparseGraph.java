@@ -176,15 +176,26 @@ public class SparseGraph<V, E> implements Graph<V, E> {
     //Handles null, not in class, and wrong owner
     EdgeNode<E> edgeNode = convert(e);
 
-    return edgeNode.from;
+    //Handles not in set
+    if (!edgeHash.contains(edgeNode)) {
+      throw new PositionException();
+    } else {
+      return edgeNode.from;
+    }
   }
 
   @Override
   public Vertex<V> to(Edge<E> e) throws PositionException {
+
     //Handles null, not in class, and wrong owner
     EdgeNode<E> edgeNode = convert(e);
 
-    return edgeNode.to;
+    //Handles not in set
+    if (!edgeHash.contains(edgeNode)) {
+      throw new PositionException();
+    } else {
+      return edgeNode.to;
+    }
   }
 
   @Override
@@ -193,7 +204,12 @@ public class SparseGraph<V, E> implements Graph<V, E> {
     //Handles null, not in class, and wrong owner
     VertexNode<V> vertexNode = convert(v);
 
-    vertexNode.setLabel(l);
+    //Handles not in set
+    if (!vertexHash.contains(vertexNode)) {
+      throw new PositionException();
+    } else {
+      vertexNode.setLabel(l);
+    }
     return;
   }
 
@@ -203,7 +219,12 @@ public class SparseGraph<V, E> implements Graph<V, E> {
     //Handles null, not in class, and wrong owner
     EdgeNode<E> edgeNode = convert(e);
 
-    edgeNode.setLabel(l);
+    //Handles not in set
+    if (!edgeHash.contains(edgeNode)) {
+      throw new PositionException();
+    } else {
+      edgeNode.setLabel(l);
+    }
     return;
   }
 
@@ -213,7 +234,12 @@ public class SparseGraph<V, E> implements Graph<V, E> {
     //Handles null, not in class, and wrong owner
     VertexNode<V> vertexNode = convert(v);
 
-    return vertexNode.label;
+    //Handles not in set
+    if (!vertexHash.contains(vertexNode)) {
+      throw new PositionException();
+    } else {
+      return vertexNode.label;
+    }
   }
 
   @Override
@@ -222,7 +248,12 @@ public class SparseGraph<V, E> implements Graph<V, E> {
     //Handles null, not in class, and wrong owner
     EdgeNode<E> edgeNode = convert(e);
 
-    return edgeNode.label;
+    //Handles not in set
+    if (!edgeHash.contains(edgeNode)) {
+      throw new PositionException();
+    } else {
+      return edgeNode.label;
+    }
   }
 
   @Override
