@@ -20,7 +20,7 @@ public final class Config {
    */
   public static Config getConfig() {
     /* Sample valid endpoints */
-    return new Config("baltimore.streets.txt", "-76.6107,39.2866", "-76.6175,39.3296");
+    return new Config("campus.paths.txt", "-76.620883,39.326204", "-76.620647,39.331158");
   }
 
   /**

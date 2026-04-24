@@ -43,6 +43,8 @@ Total Distance: 8818.5187
 190.65 	43386:UNNAMED_ST
 1107.65 	41640:
 
+32 Edges Total
+
 Memory Monitor:
 -----------------
 Config: baltimore.streets.txt from -76.6175,39.3296 to -76.6383,39.3206
@@ -89,6 +91,8 @@ Total Distance: 5827.3652
 1160.95 	41471:EAST_DR
 190.65 	43386:UNNAMED_ST
 1107.65 	41640:
+
+17 edges
 
 Memory Monitor:
 --------------------
@@ -193,6 +197,8 @@ Total Distance: 16570.4909
 137.15 	40816:
 121.60 	45662:
 
+72 edges
+
 Memory Monitor:
 ---------------------
 Config: baltimore.streets.txt from -76.6107,39.2866 to -76.6175,39.3296
@@ -218,8 +224,6 @@ Finding shortest path took 20 milliseconds.
 
 Interesting Observations:
 ---------------------------
-In this response, I use path length as a proxy for the number of edges since it is reasonable to suggest that more edges typically results in longer paths, and it is difficult to count all individual edges.
+In that the program found a path for all of these cases, it is unremarkable. However, an interesting measurement to note is the amount of memory used. The shortest path is from 7-11 to Druid Lake, consisting of 17 edges, while the longest is from Inner Harbor to JHU, consisting of 72 edges. Even though the second path is almost 4 times as long as the first, the difference in memory usage is negligible. A difference of around 100 kB is less than 0.4% of an increase, which could as well be from normal fluctuations in memory. This shows us that the algorithm doesn't expend an absurd amount of memory to handle longer paths, instead doing so in a clever way to minimize the additional memory needed. 
 
-In that the program found a path for all of these cases, it is unremarkable. However, an interesting measurement to note is the amount of memory used. The shortest path is from 7-11 to Druid Lake while the longest is from Inner Harbor to JHU. Even though the second path is almost 3 times as long as the first, the difference in memory usage is negligible. A difference of around 100 kB is less than 0.4% of an increase, which could as well be from normal fluctuations in memory. This shows us that the algorithm doesn't expend an absurd amount of memory to handle longer paths, instead doing so in a clever way to minimize the additional memory needed. 
-
-Another interesting observation is how the time to find the shortest path scales with the length of the path. For the shortest path, it took 6 ms while it took 20 ms for the one that was about 3 times as long. The difference in time is also by about a factor of 3. The difference between the shortest and middle paths (JHU to Druid Lake) is about 3000, which is a difference by a factor of about 1.5. The times for both of these were 6 ms and 9 ms, respectively, showing that not only does time increase with path length, as expected, but also scales by nearly the same factor. More tests are needed, but these preliminary results suggest that the time this algorithm takes to find the shortest path is directly proportional to the path distance. It grows stably with the distance, indicating that this algorithm would likely be very efficient with even larger networks and distances.
+Another interesting observation is how the time to find the shortest path scales with the length of the path. For the shortest path, it took 6 ms while it took 20 ms for the one that was about 4 times as long. The difference in time is different by about a factor of 3. The difference between the shortest and middle paths (JHU to Druid Lake) is a difference by a factor of about 2. The times for both of these were 6 ms and 9 ms, respectively, showing that not only does time increase with path length, as expected, but also scales by less than the same factor. That is, if the number of edges increases by a factor of n, then the amount of time it takes increases by less than a factor of n. More tests are needed, but these preliminary results suggest that the time this algorithm takes to find the shortest path is directly proportional to the path distance based on edge count, and it performs better than a 1:1 scaling. These results show that if the number of edges increases by a factor of n, the time taken increases by a factor of 3n/4, but this result may not generalize across networks. What can be generalized is the stability of the growth. The runtime grows stably with the distance, indicating that this algorithm would likely be very efficient with even larger networks and distances.
