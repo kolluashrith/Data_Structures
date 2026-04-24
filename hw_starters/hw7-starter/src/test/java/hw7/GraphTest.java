@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class GraphTest {
@@ -314,7 +316,291 @@ public abstract class GraphTest {
     assertEquals("e", e_again.get());
   }
 
-  //Need Tests for everything from iterables and down
+  @Test
+  @DisplayName("vertices() returns empty iterable on new graph")
+  public void verticesReturnsEmptyIterableOnNewGraph() {
+
+    Iterable<Vertex<String>> vertices = graph.vertices();
+
+    if (vertices.iterator().hasNext()) {
+      fail("There should be no vertices in a new graph");
+    }
+  }
+
+  @Test
+  @DisplayName("vertices() returns iterable with all vertices")
+  public void verticesReturnsAllVertices() {
+    ArrayList<Vertex<String>> trueVertices = new ArrayList<>();
+
+    trueVertices.add(graph.insert("v1"));
+    trueVertices.add(graph.insert("v2"));
+    trueVertices.add(graph.insert("v3"));
+
+    Iterable<Vertex<String>> vertices = graph.vertices();
+
+    for (Vertex<String> v : vertices) {
+      if (!trueVertices.remove(v)) {
+        fail("Vertex in iterable was not found in graph");
+      }
+    }
+
+    if (!trueVertices.isEmpty()) {
+      fail("Incorrect number of vertices in the graph or incorrect vertices present");
+      //Do not check order because order does not matter
+    }
+  }
+
+  @Test
+  @DisplayName("vertices() returns correct iterable after removal")
+  public void verticesWorksAfterVertexRemoval() {
+    Vertex<String> v1 = graph.insert("v1");
+
+    ArrayList<Vertex<String>> trueVertices = new ArrayList<>();
+    trueVertices.add(graph.insert("v2"));
+    trueVertices.add(graph.insert("v3"));
+
+    graph.remove(v1);
+
+    Iterable<Vertex<String>> vertices = graph.vertices();
+
+    for (Vertex<String> v : vertices) {
+      if (!trueVertices.remove(v)) {
+        fail("Vertex in iterable was not found in graph");
+      }
+    }
+
+    if (!trueVertices.isEmpty()) {
+      fail("Incorrect number of vertices in the graph or incorrect vertices present");
+      //Do not check order because order does not matter
+    }
+  }
+
+  @Test
+  @DisplayName("edges() returns empty iterable on new graph")
+  public void edgesReturnsEmptyIterableOnNewGraph() {
+
+    Iterable<Edge<String>> edges = graph.edges();
+
+    if (edges.iterator().hasNext()) {
+      fail("There should be no edges in a new graph");
+    }
+  }
+
+  @Test
+  @DisplayName("edges() returns iterable with all edges")
+  public void edgesReturnsAllEdges() {
+    ArrayList<Edge<String>> trueEdges = new ArrayList<>();
+
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Vertex<String> v3 = graph.insert("v3");
+    trueEdges.add(graph.insert(v1, v2, "v1-v2"));
+    trueEdges.add(graph.insert(v2, v3, "v2-v3"));
+    trueEdges.add(graph.insert(v3, v1, "v3-v1"));
+
+    Iterable<Edge<String>> edges = graph.edges();
+
+    for (Edge<String> e : edges) {
+      if (!trueEdges.remove(e)) {
+        fail("Edge in iterable was not present in the graph");
+      }
+    }
+
+    if (!trueEdges.isEmpty()) {
+      fail("Incorrect number of edges in the graph or incorrect edges present");
+    }
+  }
+
+  @Test
+  @DisplayName("edges() returns iterable with all edges even when edge data is null")
+  public void edgesReturnsAllEdgesWhenEIsNull() {
+    ArrayList<Edge<String>> trueEdges = new ArrayList<>();
+
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Vertex<String> v3 = graph.insert("v3");
+    trueEdges.add(graph.insert(v1, v2, null));
+    trueEdges.add(graph.insert(v2, v3, null));
+    trueEdges.add(graph.insert(v3, v1, null));
+
+    Iterable<Edge<String>> edges = graph.edges();
+    for (Edge<String> e : edges) {
+      if (!trueEdges.remove(e)) {
+        fail("Edge in iterable was not present in the graph");
+      }
+    }
+
+    if (!trueEdges.isEmpty()) {
+      fail("Incorrect number of edges in the graph or incorrect edges present");
+    }
+  }
+
+  @Test
+  @DisplayName("edges() returns correct iterable after removal")
+  public void edgesWorksAfterEdgeRemoval() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Vertex<String> v3 = graph.insert("v3");
+
+    ArrayList<Edge<String>> trueEdges = new ArrayList<>();
+    Edge<String> e1 = graph.insert(v1, v2, "v1-v2");
+    trueEdges.add(graph.insert(v2, v3, "v2-v3"));
+
+    graph.remove(e1);
+
+    Iterable<Edge<String>> edges = graph.edges();
+
+    for (Edge <String> e : edges) {
+      if (!trueEdges.remove(e)) {
+        fail("Edge in iterable was not found in graph");
+      }
+    }
+
+    if (!trueEdges.isEmpty()) {
+      fail("Incorrect number of edges in the graph or incorrect edges present");
+      //Do not check order because order does not matter
+    }
+  }
+
+  @Test
+  @DisplayName("outgoing(v) throws PositionException for null v")
+  public void outgoingThrowsPositionExceptionForNullV() {
+    try {
+      graph.outgoing(null);
+      fail("PositionException should have been thrown for null v");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("outgoing(v) returns empty iterable for isolated vertex")
+  public void outgoingEmptyForIsolatedVertex() {
+    Vertex<String> v = graph.insert("v");
+    Iterable<Edge<String>> edges = graph.outgoing(v);
+    if (edges.iterator().hasNext()) {
+      fail("There should be no outgoing edges in the graph for an isolated vertex");
+    }
+  }
+
+  @Test
+  @DisplayName("outgoing(v) returns correct edges")
+  public void outgoingReturnsCorrectEdges() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Vertex<String> v3 = graph.insert("v3");
+
+    ArrayList<Edge<String>> trueEdges = new ArrayList<>();
+    trueEdges.add(graph.insert(v1, v2, "v1-v2"));
+    trueEdges.add(graph.insert(v1, v3, "v1-v3"));
+
+    graph.insert(v2, v3, "v2-v3");
+
+    Iterable<Edge<String>> edges = graph.outgoing(v1);
+    for (Edge<String> e : edges) {
+      if (!trueEdges.remove(e)) {
+        fail("Edge in iterable was not present in the graph");
+      }
+    }
+    if (!trueEdges.isEmpty()) {
+      fail("Incorrect number of edges in the graph or incorrect edges present");
+    }
+  }
+
+  @Test
+  @DisplayName("outgoing(v) returns correct iterable after edge removal")
+  public void outgoingReturnCorrectIterableAfterEdgeRemoval() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Vertex<String> v3 = graph.insert("v3");
+
+    ArrayList<Edge<String>> trueEdges = new ArrayList<>();
+    trueEdges.add(graph.insert(v1, v2, "v1-v2"));
+    Edge<String> toRemove = graph.insert(v1, v3, "v1-v3");
+
+    graph.remove(toRemove);
+
+    Iterable<Edge<String>> edges = graph.outgoing(v1);
+    for (Edge<String> e : edges) {
+      if (!trueEdges.remove(e)) {
+        fail("Edge in iterable was not present in the graph");
+      }
+    }
+    if (!trueEdges.isEmpty()) {
+      fail("Incorrect number of edges in the graph or incorrect edges present");
+    }
+  }
+
+  @Test
+  @DisplayName("incoming(v) throws PositionException for null v")
+  public void incomingThrowsPositionExceptionForNullV() {
+    try {
+      graph.incoming(null);
+      fail("PositionException should have been thrown for null v");
+    } catch (PositionException e) {
+      return;
+    }
+  }
+
+  @Test
+  @DisplayName("incoming(v) returns empty iterable for isolated vertex")
+  public void incomingEmptyForIsolatedVertex() {
+    Vertex<String> v = graph.insert("v");
+    Iterable<Edge<String>> edges = graph.incoming(v);
+    if (edges.iterator().hasNext()) {
+      fail("There should be no incoming edges in the graph for an isolated vertex");
+    }
+  }
+
+  @Test
+  @DisplayName("incoming(v) returns correct edges")
+  public void incomingReturnsCorrectEdges() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Vertex<String> v3 = graph.insert("v3");
+
+    ArrayList<Edge<String>> trueEdges = new ArrayList<>();
+    trueEdges.add(graph.insert(v1, v3, "v1-v3"));
+    trueEdges.add(graph.insert(v2, v3, "v2-v3"));
+
+    graph.insert(v1, v2, "v1-v2");
+
+    Iterable<Edge<String>> edges = graph.incoming(v3);
+    for (Edge<String> e : edges) {
+      if (!trueEdges.remove(e)) {
+        fail("Edge in iterable was not present in the graph");
+      }
+    }
+    if (!trueEdges.isEmpty()) {
+      fail("Incorrect number of edges in the graph or incorrect edges present");
+    }
+  }
+
+  @Test
+  @DisplayName("incoming(v) returns correct edges")
+  public void incomingReturnsCorrectIterableAfterEdgeRemoval() {
+    Vertex<String> v1 = graph.insert("v1");
+    Vertex<String> v2 = graph.insert("v2");
+    Vertex<String> v3 = graph.insert("v3");
+
+    ArrayList<Edge<String>> trueEdges = new ArrayList<>();
+    trueEdges.add(graph.insert(v1, v3, "v1-v3"));
+    Edge<String> toRemove = graph.insert(v2, v3, "v2-v3");
+
+    graph.remove(toRemove);
+
+    Iterable<Edge<String>> edges = graph.incoming(v3);
+    for (Edge<String> e : edges) {
+      if (!trueEdges.remove(e)) {
+        fail("Edge in iterable was not present in the graph");
+      }
+    }
+    if (!trueEdges.isEmpty()) {
+      fail("Incorrect number of edges in the graph or incorrect edges present");
+    }
+  }
+
+  //Need Tests for from/to and down
 
   // TODO add more tests here.
 }
