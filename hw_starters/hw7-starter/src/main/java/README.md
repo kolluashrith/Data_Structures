@@ -1,4 +1,7 @@
 # Homework 7 Discussions
+
+Each of the tests below were ran in triplicate. Since stable performance was shown, the median result is reported.
+
 ============================================ TEST 1 RESULTS ==========================================
 JHU to Druid Lake
 Starting location: -76.6175,39.3296
@@ -215,6 +218,7 @@ Finding shortest path took 20 milliseconds.
 
 Interesting Observations:
 ---------------------------
+In this response, I use path length as a proxy for the number of edges since it is reasonable to suggest that more edges typically results in longer paths, and it is difficult to count all individual edges.
 
 In that the program found a path for all of these cases, it is unremarkable. However, an interesting measurement to note is the amount of memory used. The shortest path is from 7-11 to Druid Lake while the longest is from Inner Harbor to JHU. Even though the second path is almost 3 times as long as the first, the difference in memory usage is negligible. A difference of around 100 kB is less than 0.4% of an increase, which could as well be from normal fluctuations in memory. This shows us that the algorithm doesn't expend an absurd amount of memory to handle longer paths, instead doing so in a clever way to minimize the additional memory needed. 
 
