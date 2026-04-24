@@ -31,7 +31,6 @@ public class SparseGraph<V, E> implements Graph<V, E> {
     edgeHash = new HashSet<>();
     edgeCount = 0;
   }
-  // TODO You may need to add fields/constructor here!
 
   // Converts the vertex back to a VertexNode to use internally
   private VertexNode<V> convert(Vertex<V> v) throws PositionException {
@@ -83,8 +82,13 @@ public class SparseGraph<V, E> implements Graph<V, E> {
     VertexNode<V> fromNode = convert(from);
     VertexNode<V> toNode = convert(to);
 
+    //Handles not in set, stale vertex check
+    if (!vertexHash.contains(fromNode) ||  !vertexHash.contains(toNode)) {
+      throw new PositionException();
+    }
+
     //Check self-loop
-    if (fromNode.equals(toNode)) {
+    if (fromNode == toNode) {
       throw new InsertionException();
     }
 
@@ -157,14 +161,26 @@ public class SparseGraph<V, E> implements Graph<V, E> {
   @Override
   public Iterable<Edge<E>> outgoing(Vertex<V> v) throws PositionException {
 
+    //Handles null, not in class, and wrong owner
     VertexNode<V> vertex = convert(v);
+
+    //Handles not in set, stale vertex check
+    if (!vertexHash.contains(vertex)) {
+      throw new PositionException();
+    }
 
     return (Iterable<Edge<E>>) (Iterable<?>) Collections.unmodifiableCollection(vertex.outgoingEdges.values());
   }
 
   @Override
   public Iterable<Edge<E>> incoming(Vertex<V> v) throws PositionException {
+    //Handles null, not in class, and wrong owner
     VertexNode<V> vertex = convert(v);
+
+    //Handles not in set, stale vertex check
+    if (!vertexHash.contains(vertex)) {
+      throw new PositionException();
+    }
 
     return (Iterable<Edge<E>>) (Iterable<?>) Collections.unmodifiableCollection(vertex.incomingEdges.values());
   }
